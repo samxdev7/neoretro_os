@@ -6,6 +6,13 @@
         "PTR3_L9 copy.C": "cpp",
         "EXTRA.C": "cpp",
         "PTR4_L9.C": "cpp",
-        "PTR2_L9.C": "cpp"
+        "PTR2_L9.C": "cpp",
+        "SVGA256TEST.C": "cpp",
+        "RASTERING.C": "cpp",
+        "respaldo.C": "cpp",
+        "SVGA256TEST copy.C": "cpp",
+        "IBM8514TEST.C": "cpp",
+        "IB.C": "cpp",
+        "GuiaRaster.C": "cpp"
     }
 }

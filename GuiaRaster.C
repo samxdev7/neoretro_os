@@ -52,7 +52,7 @@
 int main() {
 	/* Declaracion de puntero a fichero (IMPORTANTE) */
     FILE *file;
-	
+
 	/* Iniciar modo grafico hacia BIN */
     if (iniciar_modo_svga_256("C:\\TC20\\BIN")) return EXIT_FAILURE;
 

@@ -30,11 +30,22 @@
 
 /*
     =======================================
+    Declaracion de Directivas
+    =========================================
+*/
+
+#define WIDTH 320 		/* Ancho fijo de la pantalla */
+#define HEIGHT 200		/* Alto fijo de la pantalla */
+
+/*
+    =======================================
     Declaracion de Prototipos
     =========================================
 */
 short int iniciar_modo_svga_256(char *dir);
 void getch_closegraph(void);
+void colocar_configuraciones(void);
+void set_bg(unsigned char color);
 
 /*
     =======================================
@@ -42,7 +53,14 @@ void getch_closegraph(void);
     =========================================
 */
 
-/* Funcion iniciar modo grafico  */
+/* 
+    iniciar_modo_svga_256()
+    - Funcion que inicia el modo grafico SVGA256.
+    
+    Parametros:
+    - char *dir: Cadena que indica el directorio donde esta guardado el driver
+    svga256.bgi para usar el modo 320x200x256.
+*/
 short int iniciar_modo_svga_256(char *dir)
 {
 	/* Declaracion e instalacion de modo 320x200x256 */
@@ -53,7 +71,7 @@ short int iniciar_modo_svga_256(char *dir)
 	este caso usaremos SVGA 256, ingresamos los siguientes parametros para
 	importar este driver:
 		- "Svga256": Nombre del modo grafico a usar
-		- detectar_vga_256: Puntero a funcion que devuelve 320x200x256
+		- detectar_svga_256: Puntero a funcion que devuelve 320x200x256
 	*/
 	int driver = installuserdriver("Svga256", detectar_svga_256);
 
@@ -73,11 +91,43 @@ short int iniciar_modo_svga_256(char *dir)
 	return EXIT_SUCCESS; /* Si todo sale correctamente, se puede trabajar adecuadamente con el modo grafico */
 }
 
-/* Funcion cerrar modo grafico */
+/* 
+    iniciar_modo_svga_256()
+    - Funcion que cierra el modo grafico con getch + closegraph.
+*/
 void getch_closegraph(void)
 {
 	getch();
 	closegraph();
 }
+
+/* 
+    colocar_configuraciones()
+    - Funcion que cambia las configuraciones del sistema operativo, ya sea
+    el color de la letra, y la fuente.
+*/
+void colocar_configuraciones(void)
+{
+    /* Definir color y fuente de letra */
+    setcolor(BLACK);
+    settextstyle(SMALL_FONT, HORIZ_DIR, 4);
+    settextjustify(LEFT_TEXT, TOP_TEXT);
+}
+
+/* 
+    set_bg()
+    - Funcion que cambia el color de fondo de la pantalla, resolviendo la
+    problematica de setbkcolor de graphics.h.
+
+    Parametros:
+    - unsigned char color: Indica el color a cambiar del fondo de la pantalla.
+*/
+void set_bg(unsigned char color)
+{
+    /* Definir color y fuente de letra */
+    setfillstyle(SOLID_FILL, color);
+    bar(0, 0, WIDTH, HEIGHT);
+}
+
 #endif
 

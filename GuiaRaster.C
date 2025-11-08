@@ -36,15 +36,6 @@
 
 /*
     =======================================
-    Declaracion de Directivas
-    =========================================
-*/
-
-#define WIDTH 320 		/* Ancho fijo de la pantalla */
-#define HEIGHT 200		/* Alto fijo de la pantalla */
-
-/*
-    =======================================
     Programa Principal
     =========================================
 */

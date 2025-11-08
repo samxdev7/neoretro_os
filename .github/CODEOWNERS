@@ -1,4 +1,13 @@
-* @samxdev7 @aneural
+# =============================================
+# CODEOWNERS - Asignación Automática de Reviews
+# =============================================
 
-/master/ @samxdev7 @aneural
-/develop/ @samxdev7 @aneural
+# Dueño es owner de TODO el código
+* @samxdev7
+
+# Configuraciones críticas - SOLO dueño
+/.github/ @samxdev7
+
+# Ramas protegidas - SOLO dueño y admin
+/main/ @samxdev7 @admin-usuario
+/develop/ @samxdev7 @admin-usuario

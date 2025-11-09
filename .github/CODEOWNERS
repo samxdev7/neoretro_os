@@ -9,5 +9,5 @@
 /.github/ @samxdev7
 
 # Ramas protegidas - SOLO dueño y admin
-/main/ @samxdev7
-/develop/ @samxdev7
+/main/ @samxdev7 @aneural
+/develop/ @samxdev7 @aneural

@@ -35,8 +35,9 @@
     Declaracion de Directivas
     =========================================
 */
-#define FORMATO_HORA 6    /* Corresponde a la cantidad de caracteres que tendra la hora */
-#define FORMATO_FECHA 11  /* Indica la cantidad de caracteres del formato de la fecha */
+#define FORMATO_HORA 6          /* Corresponde a la cantidad de caracteres que tendra la hora */
+#define FORMATO_FECHA 11        /* Indica la cantidad de caracteres del formato de la fecha */
+#define FORMATO_FECHA_LARGA 27  /* Corresponde a la cantidad de letras de una fecha pero larga */
 
 /*
     =======================================
@@ -46,7 +47,8 @@
 void obtener_hora(char *buffer_hora);
 void obtener_fecha(char *buffer_fecha);
 void obtener_fecha_hora(char *buffer_hora, char *buffer_fecha);
-short verificar_cambio(char *hora_actual, char *fecha_actual);
+short verificar_cambio_fecha(char *hora_actual, char *fecha_actual);
+void obtener_fecha_larga(char *fecha_larga);
 
 /*
     =======================================
@@ -115,7 +117,7 @@ void obtener_fecha_hora(char *buffer_hora, char *buffer_fecha)
     time_t t;
     struct tm *hora_local;
     
-    /* 2. Se obtienen los dato de tiempo */
+    /* 2. Se obtienen los datos de tiempo */
     time(&t);
     hora_local = localtime(&t);
 
@@ -133,7 +135,7 @@ void obtener_fecha_hora(char *buffer_hora, char *buffer_fecha)
 }
 
 /*
-    verificar_cambio();
+    verificar_cambio_fecha();
     Funcion que verifica si los buffers tienen la hora y fecha actual,
     si es el caso se actualizan los buffers, sino, se mantienen.
 
@@ -144,7 +146,7 @@ void obtener_fecha_hora(char *buffer_hora, char *buffer_fecha)
     Devuelve cero si no se ha actualizado (ya que es la hora/fecha actual), pero
     en caso de que se haya actualizado devuelve 1.
 */
-short verificar_cambio(char *hora_actual, char *fecha_actual)
+short verificar_cambio_fecha(char *hora_actual, char *fecha_actual)
 {
     /* 1. Se declaran dos nuevos buffers de fecha y hora + una bandera */
     char nueva_hora[FORMATO_HORA];
@@ -174,4 +176,40 @@ short verificar_cambio(char *hora_actual, char *fecha_actual)
     /* Dependiendo de la bandera se devuelve si se actualizo o no el tiempo */
     return cambio;
 }
+
+/*
+    obtener_fecha_larga();
+    Funcion que permite obtener una fecha mas detallada.
+
+    Parametros:
+    char *fecha_larga: Buffer/arreglo de caracteres de la fecha larga.
+*/
+void obtener_fecha_larga(char *fecha_larga)
+{
+    /* 1. Declarar variables estructuras de tiempo */
+    time_t t;
+    struct tm *hora_local;
+
+    char *dias_semana[] = { /* Arreglo de dias de la semana */
+        "Domingo", "Lunes", "Martes", "Miercoles", 
+        "Jueves", "Viernes", "Sabado"
+    };
+    
+    /* 2. Se obtienen los datos de tiempo */
+    time(&t);
+    hora_local = localtime(&t);
+
+    /* 
+        3. Inscribir fecha larga que contendra la siguiente estructura: 
+        Dia_de_la_semana, dia de mes
+    */
+    sprintf(
+        fecha_larga,                          /* Buffer de fecha larga */
+        "%s, %s de %s",                       /* Formato de fecha */
+        dias_semana[hora_local->tm_wday + 1], /* Dia de la semana */
+        hora_local->tm_mday,                  /* Dia */
+        hora_local->tm_mon                    /* Mes */
+    );
+}
+
 #endif

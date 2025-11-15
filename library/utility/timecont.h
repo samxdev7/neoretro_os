@@ -47,7 +47,7 @@
 void obtener_hora(char *buffer_hora);
 void obtener_fecha(char *buffer_fecha);
 void obtener_fecha_hora(char *buffer_hora, char *buffer_fecha);
-short verificar_cambio_fecha(char *hora_actual, char *fecha_actual);
+short verificar_cambio_tiempo(char *hora_actual, char *fecha_actual);
 void obtener_fecha_larga(char *fecha_larga);
 
 /*
@@ -135,7 +135,7 @@ void obtener_fecha_hora(char *buffer_hora, char *buffer_fecha)
 }
 
 /*
-    verificar_cambio_fecha();
+    verificar_cambio_tiempo();
     Funcion que verifica si los buffers tienen la hora y fecha actual,
     si es el caso se actualizan los buffers, sino, se mantienen.
 
@@ -146,7 +146,7 @@ void obtener_fecha_hora(char *buffer_hora, char *buffer_fecha)
     Devuelve cero si no se ha actualizado (ya que es la hora/fecha actual), pero
     en caso de que se haya actualizado devuelve 1.
 */
-short verificar_cambio_fecha(char *hora_actual, char *fecha_actual)
+short verificar_cambio_tiempo(char *hora_actual, char *fecha_actual)
 {
     /* 1. Se declaran dos nuevos buffers de fecha y hora + una bandera */
     char nueva_hora[FORMATO_HORA];
@@ -206,7 +206,7 @@ void obtener_fecha_larga(char *fecha_larga)
     sprintf(
         fecha_larga,                          /* Buffer de fecha larga */
         "%s, %s de %s",                       /* Formato de fecha */
-        dias_semana[hora_local->tm_wday + 1], /* Dia de la semana */
+        dias_semana[hora_local->tm_wday], /* Dia de la semana */
         hora_local->tm_mday,                  /* Dia */
         hora_local->tm_mon                    /* Mes */
     );

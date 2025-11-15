@@ -151,6 +151,12 @@ void manejar_hover_componente(
     short mouse_y,
     void (*renderizar_componente_especial)(Component*)
 );
+void manejar_hover_componente_texto(
+    Component *componente,
+    short mouse_x,
+    short mouse_y,
+    char *texto
+);
 
 /* Seccion 4. Funciones para manejo de logica interna */
 short mouse_sobre_componente(Component *componente, short mouse_x, short mouse_y);
@@ -390,6 +396,73 @@ void manejar_hover_componente(
     mver();
     
     /* 10. Actualizar estado en la estructura */
+    componente -> hover.estado = hover_actual;
+}
+
+/*
+    manejar_hover_componente_texto()
+    - Funcion general para manejar el hover para un componente de texto.
+    - Replica la funcion original, con la diferencia de que este esta creado
+    especialmente para manejar los textos en los componentes.
+
+    - Parametros:
+    Component *componente: Componente que se evaluara para hover
+    int mouse_x, int mouse_y: Posicion actual del mouse
+    char *texto: Texto inscrito en el centro del componente
+*/
+void manejar_hover_componente_texto(
+    Component *componente,
+    short mouse_x,
+    short mouse_y,
+    char *texto
+) {
+    /* 1. Se declaran variables de Enum HoverStatus para evaluar los hovers manejados
+    por la interfaz y posiciones del raton */
+    HoverStatus hover_actual;   /* Corresponde con el hover actual */
+    HoverStatus hover_anterior; /* Corresponde con el hover anterior */
+    short texto_x, texto_y;     /* Posiciones del texto */
+
+    /* 2. Verificar si el hover está disponible, sino, detiene la funcion */
+    if (componente -> hover.disponible != HOVER_DISPONIBLE) return;
+    
+    /* 3. Determinar estado actual del hover a traves de un operador ternario */
+    /* Esta variable obtendra un resultado booleano a traves de la funcion 
+    mouse_sobre_componente, que permite evaluar si el raton esta encima de un componente,
+    siendo util para poder determinar si es el hover actual o lo era */
+    hover_actual = mouse_sobre_componente(componente, mouse_x, mouse_y) ? 
+                   HOVER_ACTIVO : HOVER_NINGUNO;
+    
+    /* 4. Obtener estado anterior (dependiendo de lo que guardo hover.estado anteriormente) */
+    hover_anterior = componente -> hover.estado;
+    
+    /* 5. Evaluar si el hover actual no es el anterior (sino, detener la funcion) */
+    if (hover_actual == hover_anterior) return;
+    
+    /* 6. Capturar los centros del texto del componente */
+    texto_x = CENTRO_X(componente) - textwidth(texto) / 2;
+	texto_y = CENTRO_Y(componente) - textheight(texto) / 2 - 2;
+
+    /* 7. Procesar cambio de hover (solo si los hovers son diferentes) */
+    mocultar(); /* Para evitar problemas con el renderizado se oculta primero el raton */
+        
+    /* 8. Si el hover actual es el que esta encima se dibuja el componente pero en 
+    su version hover */
+    if (hover_actual == HOVER_ACTIVO) {
+        /* Mouse esta encima == Dibujar hover */
+        renderizar_componente_hover(componente, NULL);
+        outtextxy(texto_x, texto_y, texto);
+    } 
+    
+    /* 9. Si el raton no esta encima de ningun componente */
+    else {
+        renderizar_componente(componente);
+        outtextxy(texto_x, texto_y, texto);
+    }
+    
+    /* 10. Una vez hecho el renderizado el raton vuelve a ser visible */
+    mver();
+    
+    /* 11. Actualizar estado en la estructura */
     componente -> hover.estado = hover_actual;
 }
 

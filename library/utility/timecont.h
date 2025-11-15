@@ -195,6 +195,12 @@ void obtener_fecha_larga(char *fecha_larga)
         "Jueves", "Viernes", "Sabado"
     };
     
+    char *meses[] = { /* Arreglo de meses */
+        "Enero", "Febrero", "Marzo", "Abril", 
+        "Mayo", "Junio", "Julio", "Agosto",
+        "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    };
+
     /* 2. Se obtienen los datos de tiempo */
     time(&t);
     hora_local = localtime(&t);
@@ -205,10 +211,10 @@ void obtener_fecha_larga(char *fecha_larga)
     */
     sprintf(
         fecha_larga,                          /* Buffer de fecha larga */
-        "%s, %s de %s",                       /* Formato de fecha */
-        dias_semana[hora_local->tm_wday], /* Dia de la semana */
+        "%s, %d de %s",                       /* Formato de fecha */
+        dias_semana[hora_local->tm_wday],     /* Dia de la semana */
         hora_local->tm_mday,                  /* Dia */
-        hora_local->tm_mon                    /* Mes */
+        meses[hora_local->tm_mon]             /* Mes */
     );
 }
 

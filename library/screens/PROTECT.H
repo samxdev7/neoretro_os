@@ -6,13 +6,17 @@
 #define M_PI_2 1.57079632679489661923
 #endif
 
-/* 	"protect.h"
+#ifndef PROTECT_H
+#define PROTECT_H
+/* 	"PROTECT_H"
 
 	Libreria encargada de los tres protectores de pantalla
 	Para utilizarla solo se debes llamar:
 		-protector1();		Movimiento similar al del DVD con "NeoRetro OS"
 		-protector2();		Carrusel de imagenes de paisajes en Nicaragua
-		-protector3();   	Creacion de figuras geometricas en lugar aleatorios, con colores aleatorios  */
+		-protector3();   	Creacion de figuras geometricas en lugar aleatorios, con colores aleatorios  
+*/
+
 /*
     =======================================
     Librerias Estandar
@@ -37,27 +41,21 @@
 
 /*
     =======================================
-    Tamaño de pantalla
-    =======================================
+    Declaracion de Prototipos
+    =========================================
 */
-#define WIDTH 320
-#define HEIGHT 200
-
-/* ===========================================================
-   Funciones
-   =========================================================== */
-	/*Protector de pantalla #1 - Estilo DVD*/
+/* Protector de pantalla #1 - Estilo DVD */
 int protector1(void);
 void dibujarLogo(int x, int y, int color);
 void dibujarFondo(void);
 void actualizarPosicion(int *x, int *y, int dx, int dy);
 void manejarRebotes(int *x, int *y, int *dx, int *dy, int width, int height, int *color);
 
-	/*Protector de pantalla #2- Carrusel de imagenes de paisajes*/
+/* Protector de pantalla #2- Carrusel de imagenes de paisajes */
 int protector2(void);
 void mostrarImagenBin(const char *nombre_bin, int ancho, int alto, int sec);
 
-	/*Protector de pantalla #3- Figuras geometricas*/
+/* Protector de pantalla #3- Figuras geometricas */
 int protector3(void);
 void pfiguras(void);
 void dibujarEstrella(void);
@@ -74,7 +72,7 @@ int yAleatorio(int margen);
 int xAleatorio(int margen);
 int colorAleatorio(void);
 
-	/* Array de punteros a funciones para pfiguras */
+/* Array de punteros a funciones para pfiguras */
 static void (*figuras[])(void) = {
     dibujarTriangulo, dibujarCuadrado, dibujarEstrella,
     dibujarPentagono, dibujarHexagono, dibujarCirculo,
@@ -131,8 +129,7 @@ void dibujarLogo(int x, int y, int color) {
    ========================================================== */
 void dibujarFondo() {
     cleardevice();
-    setfillstyle(SOLID_FILL, BLACK);
-    bar(0, 0, WIDTH, HEIGHT);
+    set_bg(BLACK);
 }
 
 /* ==========================================================
@@ -155,12 +152,11 @@ void manejarRebotes(int *x, int *y, int *dx, int *dy, int widthLogo, int heightL
     }
 
     /* Rebote vertical */
-    if (*y <= 0 || *y + heightLogo >= HEIGHT - 10) {
+    if (*y <= 0 || *y + heightLogo >= HEIGHT) {
         *dy = -(*dy);
         *color = colorAleatorio();
     }
 }
-
 
 /* ===========================================================
    			2. CARRUSEL
@@ -174,12 +170,10 @@ int protector2(){
         return EXIT_FAILURE;
 
     /* Fondo blanco */
-    setfillstyle(SOLID_FILL, WHITE);
-    bar(0, 0, WIDTH, HEIGHT);
+    set_bg(WHITE);
 
      /* Bucle infinito hasta que usuario presione una tecla */
     while (!kbhit()) {
-
         mostrarImagenBin("rivas.bin",    320, 200, 6000);
         if (kbhit()) break;
 
@@ -231,7 +225,7 @@ int protector3(){
 
     if (iniciar_modo_svga_256("C:\\TC20\\BIN")) return EXIT_FAILURE;
 
-    setbkcolor(0);
+    set_bg(BLACK);
     cleardevice();
 
     pfiguras();
@@ -404,6 +398,7 @@ void dibujarPentagono() {
         p[2*i] = x + (int)(tam*cos(ang));
         p[2*i+1] = y + (int)(tam*sin(ang));
     }
+    
     rellenaFigurasAleatorio(n, p);
     liberarPuntos(pts);
 }
@@ -461,4 +456,5 @@ void dibujarElipse() {
     setfillstyle(SOLID_FILL, relleno);
     fillellipse(x, y, rx, ry);
     ellipse(x, y, 0, 360, rx, ry);
-}
+}
+#endif

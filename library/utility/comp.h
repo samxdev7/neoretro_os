@@ -586,6 +586,7 @@ void ajustar_texto_largo_componente(Component *componente, char *texto, short *t
         texto_temporal[letra] = texto[letra];
         letra++;
     }
+    texto_temporal[letra] = 0;
 
     /* 11. Calcular posicion de primera linea */
     *texto_x = (distancia_x - textwidth(texto_temporal)) / 2 + componente->x1;

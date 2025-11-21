@@ -37,7 +37,7 @@
 
 /*
     =======================================
-    Definción de Estructras
+    Definciï¿½n de Estructras
     =========================================
 */
 
@@ -61,8 +61,7 @@ typedef enum {
 short int validar_archivo(FILE *archivo);
 void dibujar_con_rasterizado_coords(FILE *archivo, int pos_x, int pos_y, int ancho, int alto);
 void dibujar_con_rasterizado_pos(FILE *archivo, int pos, int img_ancho, int img_alto, int scr_ancho, int scr_alto);
-void guardar_paleta(void);
-void imprimir_paleta(void);
+void dibujar_raster_png_coords(FILE *archivo, int pos_x, int pos_y, int ancho, int alto);
 
 /*
     =======================================
@@ -126,7 +125,7 @@ void dibujar_con_rasterizado_pos(FILE *archivo, int pos, int img_ancho, int img_
 {
     int punto_x, punto_y;
 
-    /* Calcular posición según selección */
+    /* Calcular posicion segun seleccion */
     switch(pos) {
         /* PARTE SUPERIOR */
         case TOP_LEFT: /* Esquina superior izquierda */
@@ -194,85 +193,26 @@ void dibujar_con_rasterizado_pos(FILE *archivo, int pos, int img_ancho, int img_
 }
 
 /*
-    guardar_paleta()
-    - Funcion que captura y guarda la paleta de colores real del hardware VGA/SVGA
-    - Accede directamente a los registros de la paleta VGA (puertos 0x03C7 y 0x03C9)
-    - Lee los componentes RGB de los 256 colores y los escala de 0-63 a 0-255
-    - Guarda los datos en un archivo binario "real_palette.bin" de 768 bytes (256 colores × 3 bytes)
-    - OJO: Esta funcion requiere acceso directo al hardware y puede no funcionar en todos los entornos
+    dibujar_raster_png_coords()
+    - Funcion que lee un archivo binario y dibuja pixel por pixel en modo grafico
+    - A diferencia de las funciones anteriores de rasterizacion esta se hizo con el proposito de dibujar
+    iconos para el sistema operativo, por lo cual se dibuja con un proceso de transparencia la cual
+    el fondo de detras debe tener exactamente el color 200 (o un azul demasiado oscuro).
+    - OJO: El archivo debe contener exactamente ancho*alto bytes para una representacion correcta.
 */
-void guardar_paleta() {
-    FILE *pal_file;
-    int i;
-    struct palettetype pal;
+void dibujar_raster_png_coords(FILE *archivo, int pos_x, int pos_y, int ancho, int alto)
+{
+    unsigned char color; /* Asignar el color de cada pixel */
+    int x, y; /* Variables de Recorrido de Cada Pixel */
 
-    pal_file = fopen("real_palette.bin", "wb");
-    if (!pal_file) {
-        printf("Error creando archivo de paleta\n");
-        return;
+    /* Leer y dibujar pixeles */
+    for (y = 0; y < alto; y++) {
+        for (x = 0; x < ancho; x++) {
+            fread(&color, 1, 1, archivo);
+            if (color != 200) /* Color de fondo a eliminar */
+                putpixel(x + pos_x, y + pos_y, color);
+        }
     }
-
-    getpalette(&pal);
-
-    printf("Guardando paleta real del hardware...\n");
-
-    /* En Turbo C 2.0 tenemos que usar los registros VGA directamente */
-    for (i = 0; i < 256; i++) {
-        unsigned char r, g, b;
-        
-        /* Leer registro de paleta VGA directamente */
-		outp(0x03C7, i);  /* Enviar índice de color a leer */
-        r = inp(0x03C9);  /* Leer componente rojo */
-        g = inp(0x03C9);  /* Leer componente verde */  
-        b = inp(0x03C9);  /* Leer componente azul */
-        
-        /* Los valores VGA van de 0-63, escalar a 0-255 */
-        r = (r * 255) / 63;
-        g = (g * 255) / 63;
-        b = (b * 255) / 63;
-        
-        /* Guardar en archivo */
-        fwrite(&r, 1, 1, pal_file);
-        fwrite(&g, 1, 1, pal_file);
-        fwrite(&b, 1, 1, pal_file);
-        
-        printf("Color %3d: R=%3d, G=%3d, B=%3d\n", i, r, g, b);
-    }
-    
-    fclose(pal_file);
-    printf("Paleta guardada en: real_palette.bin (768 bytes)\n");
-}
-
-/*
-    imprimir_paleta()
-    - Funcion que genera un archivo de texto con la paleta de colores en formato hexadecimal
-    - Crea un array en sintaxis C con los valores RGB de la paleta SVGA
-    - Los valores se escalan de 0-63 a 0-252 para mayor compatibilidad
-    - El archivo resultante "paleta_hex.txt" puede ser incluido directamente en programas C
-    - OJO: El formato de salida esta optimizado para legibilidad con 4 colores por linea
-*/
-void imprimir_paleta() {
-    FILE *hex_file = fopen("paleta_hex.txt", "w");
-    int i;
-    unsigned char r, g, b;
-    
-    fprintf(hex_file, "Paleta SVGA Real (256 colores):\n");
-    fprintf(hex_file, "const unsigned char svga_palette[768] = {\n");
-    
-    for (i = 0; i < 256; i++) {
-        outp(0x03C7, i);
-		r = inp(0x03C9) * 4;  /* 0-63 a 0-252 */
-        g = inp(0x03C9) * 4;
-        b = inp(0x03C9) * 4;
-        
-        fprintf(hex_file, "    %3d, %3d, %3d", r, g, b);
-        if (i < 255) fprintf(hex_file, ",");
-        if ((i + 1) % 4 == 0) fprintf(hex_file, "\n");
-    }
-    
-    fprintf(hex_file, "};\n");
-    fclose(hex_file);
-    printf("Paleta en hexadecimal guardada en: paleta_hex.txt\n");
 }
 #endif
 

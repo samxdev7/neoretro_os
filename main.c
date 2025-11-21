@@ -1,36 +1,77 @@
-#include <stdio.h>
+/* 
+    ======================= NEORETRO OS ============================
+
+    Descripcion breve sobre sistema operativo.
+    Agradecimientos.
+    Desarrolladores.
+    Stack de trabajo utilizado.
+    Datos adicionales.
+*/
+
+/*
+    =======================================
+    Importacion de Librerias Estandar
+    =========================================
+*/
 #include <conio.h>
+#include <dos.h>
+#include <graphics.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
-#include "bootanim.h"
-#include "block.h"
+/*
+    =======================================
+    Importacion de Librerias Personalizadas
+    =========================================
+*/
+#include "gphadmin.h"   /* Libreria que administra el modo grafico y el sistema operativo */
+#include "bootanim.h"   /* Libreria que contiene animaciones del arranque y apagado del SO */
+#include "block.h"      /* Libreria que administra la pantalla de bloqueo */
+#include "desktop.h"    /* Libreria que administra el escritorio del sistema operativo */
 
+/*
+    =======================================
+    Sistema Operativo
+    =========================================
+*/
 int main()
 {
-    short estado_os = REINICIAR;
+    /* 1. Inicializar variable de estado del sistema operativo */
+    /* Inicia con la accion de reiniciar ya que esta programada para
+    ejecutar la simulacion del arranque */
+    BootManageOS estado_os = ACCION_REINICIAR;
+
+    /* 2. Iniciar modo grafico SVGA256 - 320x200x256 */
 	if (iniciar_modo_svga_256("C:\\TC20\\BIN")) return EXIT_FAILURE;
 
+    /* === BUCLE PRINICIPAL DEL SISTEMA OPERATIVO === */
 	do {
-        if (estado_os == REINICIAR)
-        {
-            animacion_arranque();
-            pantalla_bienvenida();
-        }
+        /* Animacion de arranque + Pantalla de bienvenida */
+        if (estado_os == ACCION_REINICIAR)
+        { animacion_arranque(); pantalla_bienvenida(); }
 
+        /* Pantalla de bloqueo inicial */
         pantalla_bloqueo_inicial();
+
+        /* Pantalla de bloqueo de inicio de sesion */
         estado_os = pantalla_bloqueo_sesion();
 
-        if (estado_os == REINICIAR)
-            apagar_sistema_operativo();
-
+        /* Si se dio a iniciar en el inicio de sesion se 
+        ejecuta el escritorio del sistema operativo */
         if (estado_os == INICIAR)
-            return 0;
-            
-    } while(estado_os != APAGAR);
+            estado_os = escritorio_so();
+        
+        /* Si se decide apagar desde la pantalla de bloqueo o el escritorio 
+        se ejecuta la simulacion del apagado */
+        if (estado_os == ACCION_REINICIAR || estado_os == ACCION_APAGAR)
+            apagar_sistema_operativo();
+ 
+	} while(estado_os != ACCION_APAGAR); /* Condicion de salida clave del sistema operativo */
 
-    apagar_sistema_operativo();
+    /* Se cierra el modo grafico */
     closegraph();
 
-    /* Programa Principal */
-    return 0;
+    /* Salida con exito!!! */
+    return EXIT_SUCCESS;
 }

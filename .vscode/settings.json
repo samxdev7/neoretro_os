@@ -13,6 +13,10 @@
         "SVGA256TEST copy.C": "cpp",
         "IBM8514TEST.C": "cpp",
         "IB.C": "cpp",
-        "GuiaRaster.C": "cpp"
+        "GuiaRaster.C": "cpp",
+        "GuiaRaster copy.C": "cpp",
+        "GuiaComponentes.C": "cpp",
+        "GuiaApp.C": "cpp",
+        "TVALID.C": "cpp"
     }
 }

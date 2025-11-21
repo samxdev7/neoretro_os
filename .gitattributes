@@ -1,0 +1,12 @@
+# Archivos C - forzar CRLF para DOS/Windows
+*.c text eol=crlf
+*.h text eol=crlf
+
+# Archivos de texto general
+*.txt text eol=crlf
+README text eol=crlf
+
+# Archivos que deben mantener formato binario
+*.exe binary
+*.obj binary
+*.o binary

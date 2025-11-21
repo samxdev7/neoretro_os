@@ -5,7 +5,11 @@
 	BOOTANIM_H
 
     Libreria que simula animaciones del arranque del sistema operativo. Estas animaciones
-    se basan en la carga inicial y en el apagado del equipo.
+    se basan en la carga inicial y en el apagado del equipo. Las animaciones disponibles
+    son las siguientes:
+    - Animacion de arranque.
+    - Animacion de bienvenida.
+    - Animacion de apagado.
 
 	- Samuel Rueda
 */
@@ -15,7 +19,6 @@
     Importacion de Librerias Estandar
     =========================================
 */
-
 #include <stdio.h>
 #include <conio.h>
 #include <graphics.h>
@@ -28,24 +31,59 @@
     Importacion de Librerias Personalizadas
     =========================================
 */
-
-#include "gphadmin.h" /* Libreria que administra el modo grafico del sistema operativo */
+#include "gphadmin.h" /* Libreria que administra el modo grafico y el sistema operativo */
 #include "raster.h"   /* Libreria que contiene funciones para manejar la rasterizacion de imagenes */
 #include "dynamic.h"  /* Libreria que ofrece funciones para controlar memoria dinamica */
 
-/* Directivas para animacion de arranque */
-#define BOOT_TITLE_Y 160
-#define LETRAS_ARRANQUE 25
-#define ITERACIONES_ARRANQUE 2
+/*
+    =======================================
+    Declaracion de Directivas
+    =========================================
+*/
+/* Animacion de arranque */
+#define POSICION_Y_ARRANQUE  160    /* Posicion en Y de "Iniciando NeoRetro OS..." */ 
+#define LETRAS_ARRANQUE      25     /* Letras de "Iniciando NeoRetro OS..." */
+#define ITERACIONES_ARRANQUE 2      /* Iteraciones de "Iniciando NeoRetro OS..." */
 
-/* Directivas para animacion de bienvenida */
+/* Animacion de bienvenida */
 #define CANTIDAD_PASTELES_FLASH 4   /* Cantidad de colores pasteles para flash de bienvenida */
-#define CANTIDAD_TONOS_AZUL 6       /* Cantidad de tonos azules para fondo de bienvenida */
-#define CANTIDAD_LETRAS 11          /* Cantidad de letras del titulo "NeoRetro OS" */
+#define CANTIDAD_TONOS_AZUL     6   /* Cantidad de tonos azules para fondo de bienvenida */
+#define CANTIDAD_LETRAS         11  /* Cantidad de letras del titulo "NeoRetro OS" */
+#define MAXIMO_ITERACIONES      20  /* Iteraciones pertenecientes a la animacion del titulo */
+
+/* Animacion de apagado */
+#define LETRAS_APAGANDO      24     /* Cantidad de letras de "Apagando NeoRetro OS..." */
+
+/* Retrasos */
 #define RETRASO_LARGO 1000          /* Retraso correspondiente con el muestreo largo del titulo */
 #define RETRASO_CORTO 200           /* Retraso correspondiente para animaciones fluidas */
-#define MAXIMO_ITERACIONES 20       /* Iteraciones pertenecientes a la animacion del titulo */
 
+/*
+    =======================================
+    Declaracion de Prototipos
+    =========================================
+*/
+
+/* Seccion 1: Complementos */
+void dibujar_fondo_gradiente(void);
+
+/* Seccion 2: Animaciones */
+void animacion_arranque(void);
+void pantalla_bienvenida(void);
+void apagar_sistema_operativo(void);
+
+/*
+    =======================================
+    Inicializacion de Funciones
+    =========================================
+*/
+
+/* Seccion 1: Complementos */
+/*
+    dibujar_fondo_gradiente();
+    Funcion que dibuja un fondo de gradiente azul la cual sera utilizado
+    para la bienvenida y el apagado.
+*/
 void dibujar_fondo_gradiente(void)
 {
 	/* Paleta de tonos azules */
@@ -72,6 +110,12 @@ void dibujar_fondo_gradiente(void)
     }
 }
 
+/* Seccion 2: Animaciones */
+/*
+    animacion_arranque();
+    Funcion que anima el arranque del sistema operativo, mostrando el logo
+    de la UNI y un titulo que indica la inicializacion del sistema operativo.
+*/
 void animacion_arranque(void)
 {
     /* 1. Se declaran las variables a utilizar */
@@ -109,14 +153,14 @@ void animacion_arranque(void)
             titulo_progresivo[i] = titulo_iniciando[i];
             
             /* Luego dibujarla */
-            outtextxy((WIDTH - textwidth(titulo_progresivo)) / 2, BOOT_TITLE_Y, titulo_progresivo);
+            outtextxy((WIDTH - textwidth(titulo_progresivo)) / 2, POSICION_Y_ARRANQUE, titulo_progresivo);
             
             /* Esperar para luego redibujar */
             delay(RETRASO_CORTO - 50);
             
             /* Borrar titulo */
             setcolor(BLACK);
-            outtextxy((WIDTH - textwidth(titulo_progresivo)) / 2, BOOT_TITLE_Y, titulo_progresivo);
+            outtextxy((WIDTH - textwidth(titulo_progresivo)) / 2, POSICION_Y_ARRANQUE, titulo_progresivo);
         }
 
         /* Reiniciar cadena progresiva */
@@ -126,10 +170,15 @@ void animacion_arranque(void)
 
     /* 4. Colocar titulo original de arranque + retardo */
     setcolor(WHITE);
-    outtextxy((WIDTH - textwidth(titulo_iniciando)) / 2, BOOT_TITLE_Y, titulo_iniciando);
+    outtextxy((WIDTH - textwidth(titulo_iniciando)) / 2, POSICION_Y_ARRANQUE, titulo_iniciando);
     delay(RETRASO_LARGO);
 }
 
+/*
+    pantalla_bienvenida();
+    Funcion que anima la pantalla de bienvenida, mostrando una animacion
+    del titulo del sistema operativo "NeoRetro OS".
+*/
 void pantalla_bienvenida(void)
 {
     /* 1. Se declaran las variables a utilizar */
@@ -309,9 +358,13 @@ void pantalla_bienvenida(void)
     liberar_arreglo(buffers_fondo, CANTIDAD_LETRAS);
 }
 
-/**/
-#define LETRAS_APAGANDO 24
-
+/*
+    apagar_sistema_operativo();
+    Funcion que simula la animacion de apagado del sistema operativo.
+    Se muestra un titulo que indica que se esta apagando el sistema operativo,
+    luego se muestra una pantalla negra durante dos segundos la cual es 
+    el ultimo paso del cierre.
+*/
 void apagar_sistema_operativo(void)
 {
     /* 1. Declaracion de variables */

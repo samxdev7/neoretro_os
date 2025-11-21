@@ -26,8 +26,11 @@
     Importacion de Librerias Personalizadas
     =========================================
 */
+#include "gphadmin.h"   /* Libreria administradora del modo grafico y del sistema operativo */
+#include "raster.h"     /* Libreria que maneja el rasterizado de imagenes */
 #include "comp.h"       /* Libreria de componentes, el corazon de las interfaces */
 #include "timecont.h"   /* Libreria para gestionar de forma facil la fecha y hora */
+#include "desktop.h"    /* Libreria que administra el escritorio del sistema operativo */
 
 /*
     =======================================
@@ -36,17 +39,18 @@
 */
 /* Colores */
 #define FONDO_BLOQUEO_INICIAL 247
-#define FONDO_BLOQUEO_SESION 274
-#define PALETA_AZUL_BLOQUEO 6
+#define FONDO_BLOQUEO_SESION  274
+#define PALETA_AZUL_BLOQUEO   6
 
 /* Tamanos y cantidades */
-#define TAMANO_CUADRO 6
-#define MARGEN_ESQUINAS 8
-#define CANTIDAD_LINEAS 5
+#define TAMANO_CUADRO         6
+#define MARGEN_ESQUINAS       8
+#define CANTIDAD_LINEAS       5
+#define ICONOS_BLOQUEO_SESION 3
 
 /* Retardos manuales */
 #define RETARDO_INICIAL 30
-#define RETARDO_SESION 3000
+#define RETARDO_SESION  3000
 
 /*
     =======================================
@@ -62,19 +66,16 @@ short paleta_azul_esquinas[PALETA_AZUL_BLOQUEO] = {
     Definicion de Enums
     =========================================
 */
-/*
-    enum BootManageOS
-    Libreria encargada de categorizar las diferentes acciones de arranque 
-    simuladas del sistema operativo, utilizada en la carga inicial y
-    en el escritorio.
+
+/* 
+    enum BlockActions
+    Estructura enum que indica acciones pero especificas para la
+    pantalla de bloqueo.
 */
 typedef enum {
     INICIAR,
-    APAGAR,
-    REINICIAR,
-    SUSPENDER,
     RETROCEDER
-} BootManageOS;
+} BlockActions;
 
 /*
     =======================================
@@ -88,6 +89,7 @@ void dibujar_titulo_esquinas_bloqueo(void);
 
 /* Seccion 2: Complementos para pantalla de inicio de sesion */
 void icono_iniciar_sesion(void);
+void iconos_accion_sesion(Component *apagar, Component *reiniciar, Component *suspender);
 
 /* Seccion 3: Pantallas principales */
 void pantalla_bloqueo_inicial(void);
@@ -169,7 +171,7 @@ void degradado_esquinas(void)
                 (TAMANO_CUADRO * (linea - cuadro + 1)), 
                 WIDTH - TAMANO_CUADRO * cuadro, 
                 (TAMANO_CUADRO * (linea - cuadro))
-            ); 
+            );
             mver();
         }
     }
@@ -277,6 +279,63 @@ void icono_iniciar_sesion(void)
     );
 }
 
+/*
+    iconos_accion_sesion()
+    Funcion que renderiza los iconos relacionado a las acciones de arranque del
+    sistema operativo, siendo los siguientes:
+    - Apagar
+    - Reiniciar
+    - Suspender
+
+    Parametros:
+    - Component apagar: Componente del boton de apagado, utilizado para obtener las
+    coordenadas de este componente.
+    - Component reiniciar: Componente del boton de reinicio, utilizado para obtener
+    las coordenadas de este componente.
+    - Component suspender: Componente del boton de suspender, utilizado para obtener
+    las coordenadas de este componente.
+*/
+void iconos_accion_sesion(Component *apagar, Component *reiniciar, Component *suspender)
+{
+    /* 1. Se declaran los nombres de los ficheros de los iconos a renderizar */
+    char *iconos_ficheros[] = {"SHUTVV.bin", "RESVV.bin", "SUSVV.bin"};
+    TaskBarIcons icono;
+    short pos_x, pos_y;
+
+    /* 2. Se declara un apuntador a FILE para trabajar con los iconos */
+    FILE *fichero;
+
+    /* 3. Se renderiza cada uno de los iconos */
+    for (icono = 0; icono < ICONOS_BLOQUEO_SESION; icono++)
+    {
+        /* 4. Se abre cada fichero de icono como lectura */
+        fichero = fopen(iconos_ficheros[icono], "rb");
+
+        /* 5. Se selecciona la posicion en el que va a ser dibujada */
+        switch(icono)
+        {
+            case ICONO_APAGAR:
+                pos_x = apagar->x1;
+                pos_y = apagar->y1;
+                break;
+            case ICONO_REINICIAR:
+                pos_x = reiniciar->x1;
+                pos_y = reiniciar->y1;
+                break;
+            case ICONO_SUSPENDER:
+                pos_x = suspender->x1;
+                pos_y = suspender->y1;
+                break;
+        }
+
+        /* 6. Se dibuja cada icono con los datos seleccionados */
+        dibujar_raster_png_coords(fichero, pos_x, pos_y, 20, 20);
+
+        /* 7. Y se cierra el fichero actual */
+        fclose(fichero);
+    }
+}
+
 /* Seccion 3: Pantallas principales */
 /*
     pantalla_bloqueo_inicial();
@@ -319,13 +378,10 @@ void pantalla_bloqueo_inicial(void)
 
     /* ==== FUNCIONAMIENTO DE PANTALLA DE BLOQUEO INICIAL ==== */
 	do {
-        /* 7. Capturar la posicion actual del mouse */
-        short mouse_x = mxpos(), mouse_y = mypos();
-        
         /* 7. Se redibuja la hora y fecha larga para actualizarse con cada minuto
         que pase */
         mostrar_tiempo_bloqueo(hora, fecha, fecha_larga);
-        
+
         /* 8. Se implementa un retardo manual para la animacion de esquinas, con el objetivo
         de no redibujar muy rapido */
         if (contador_retardo == RETARDO_INICIAL)
@@ -334,7 +390,7 @@ void pantalla_bloqueo_inicial(void)
             contador_retardo = 0;   /* Y se reinicia el contador */
         }
 
-        /* 9. Se espera si se da click izquierdo o se toca un boton 
+        /* 9. Se espera si se da click izquierdo o se toca un boton
         de la tecla para pasar a la siguiente pantalla de bloqueo (inicio de sesion) */
         if (mclick() == 1 || kbhit())
 			salir = 1;  /* Se activa la bandera de salida */
@@ -389,61 +445,40 @@ BootManageOS pantalla_bloqueo_sesion(void)
 		(HEIGHT) / 2 + 27,
         (WIDTH) / 2 + 50,
 		(HEIGHT) / 2 + 39,
-		274,
-        WHITE,
-        WHITE,
+		274, WHITE, WHITE,
         HOVER_DISPONIBLE
     );
 	constructor_hover_componente( /* Hover para Iniciar */
         &iniciar_sesion,
-        274,
-        103,
-        103
+        274, 103, 103
     );
 
     constructor_componente( /* Apagar */
         &apagar,
-        240,
-		170,
-        260,
-		190,
-		274,
-        WHITE,
-        WHITE,
+        240, 170, 260, 190,
+	    274, WHITE, WHITE,
         HOVER_DISPONIBLE
     );
     constructor_componente( /* Reiniciar */
         &reiniciar,
-        265,
-		170,
-        285,
-		190,
-		274,
-        WHITE,
-        WHITE,
+        265, 170, 285, 190,
+		274, WHITE, WHITE,
         HOVER_DISPONIBLE
     );
     constructor_componente( /* Suspender */
         &suspender,
-        290,
-		170,
-        310,
-		190,
-		274,
-        WHITE,
-        WHITE,
+        290, 170, 310, 190,
+		274, WHITE, WHITE,
         HOVER_DISPONIBLE
     );
 
-    /* 4. Renderizar componentes  */
-    renderizar_componente(&apagar);
-    renderizar_componente(&reiniciar);
-    renderizar_componente(&suspender);
+    /* 4. Renderizar componente de iniciar sesion  */
 	renderizar_componente_texto(&iniciar_sesion, "Iniciar");
 
-    /* 5. Dibujar elementos extras (esquina animada + icono de iniciar sesion) */
+    /* 5. Dibujar elementos extras (esquina animada + icono de iniciar sesion + iconos de accion) */
     degradado_esquinas();
     icono_iniciar_sesion();
+    iconos_accion_sesion(&apagar, &reiniciar, &suspender);
 
     /* 6. Mostrar mouse */
     mver();
@@ -469,26 +504,26 @@ BootManageOS pantalla_bloqueo_sesion(void)
         /* Caso: Componente iniciar sesion */
         if (detectar_click_componente(&iniciar_sesion, mouse_x, mouse_y))
         {
-            salir = 1;          /* Se activa la bandera de salida */
-            destino = INICIAR;  /* Se asigna a la variable de retorno */
+			salir = 1;       		   /* Se activa la bandera de salida */
+			destino = INICIAR;         /* Se asigna a la variable de retorno */
         }
         /* Caso: Componente apagar */
         else if (detectar_click_componente(&apagar, mouse_x, mouse_y))
         {
-            salir = 1;          /* Se activa la bandera de salida */
-            destino = APAGAR;   /* Se asigna a la variable de retorno */
+			salir = 1;		           /* Se activa la bandera de salida */
+			destino = ACCION_APAGAR;   /* Se asigna a la variable de retorno */
         }
         /* Caso: Componente reiniciar */
         else if (detectar_click_componente(&reiniciar, mouse_x, mouse_y))
         {
-            salir = 1;           /* Se activa la bandera de salida */
-            destino = REINICIAR; /* Se asigna a la variable de retorno */
+			salir = 1;       		    /* Se activa la bandera de salida */
+			destino = ACCION_REINICIAR; /* Se asigna a la variable de retorno */
         }
         /* Caso: Componente suspender */
         else if (detectar_click_componente(&suspender, mouse_x, mouse_y))
         {
-            salir = 1;           /* Se activa la bandera de salida */
-            destino = SUSPENDER; /* Se asigna a la variable de retorno */
+            salir = 1;                  /* Se activa la bandera de salida */
+			destino = ACCION_SUSPENDER; /* Se asigna a la variable de retorno */
         }
 
         /* 11. Se incrementa el retardo manual */
@@ -499,4 +534,4 @@ BootManageOS pantalla_bloqueo_sesion(void)
     mocultar();
     return destino;
 }
-#endif
+#endif

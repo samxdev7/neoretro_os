@@ -225,7 +225,7 @@ void pantalla_bienvenida(void)
     setcolor(WHITE);
     settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
 
-    /* 6. Calcular posición central del título */
+    /* 6. Calcular posiciï¿½n central del tï¿½tulo */
     /* Esto se hace con el objetivo de mostrar el titulo por el centro y ubicar
     las letras correctamente en esta posicion, la cual se divide la diferencia
     entre el tamano total y la dimension del texto */
@@ -241,7 +241,7 @@ void pantalla_bienvenida(void)
     ancho_letra = textwidth(letra_actual);
     alto_letra = textheight(letra_actual);
     
-    /* 9. Calcular tamaño del buffer para cada letra */
+    /* 9. Calcular tamaï¿½o del buffer para cada letra */
     tamano_buffer = imagesize(0, 0, ancho_letra, alto_letra);
     
     /* 10. Inicializar buffers... */
@@ -254,7 +254,7 @@ void pantalla_bienvenida(void)
         /* Validar si la reserva se hizo correctamente */
         if (buffers_fondo[i] == NULL) 
         {
-            liberar_arreglo(buffers_fondo, CANTIDAD_LETRAS);
+            liberar_arreglo((void *) buffers_fondo, CANTIDAD_LETRAS);
             return;
         }
     }
@@ -263,7 +263,7 @@ void pantalla_bienvenida(void)
     posicion_x_actual = posicion_x;
     for (i = 0; i < CANTIDAD_LETRAS; i++)
     {
-        /* Capturar el fondo en la posición donde estara la letra */
+        /* Capturar el fondo en la posiciï¿½n donde estara la letra */
         getimage(
             posicion_x_actual, 
             posicion_y, 
@@ -275,17 +275,17 @@ void pantalla_bienvenida(void)
         /* Guardar la letra actual para despues medir su ancho */
         letra_actual[0] = titulo_os[i];
         
-        /* Medir ancho y avanzar posición para la siguiente letra */
+        /* Medir ancho y avanzar posiciï¿½n para la siguiente letra */
         posicion_x_actual += textwidth(letra_actual);
     }
 
-    /* 12. Animación: agitar letras */
+    /* 12. Animaciï¿½n: agitar letras */
     for (iteracion = 1; iteracion <= MAXIMO_ITERACIONES; iteracion++)
     {
         /* Se captura la posicion en x de la letra actual */
         posicion_x_actual = posicion_x;
 
-        /* Dibujar cada letra en nueva posición */
+        /* Dibujar cada letra en nueva posiciï¿½n */
         for (i = 0; i < CANTIDAD_LETRAS; i++)
         {
             /* Restaurar el fondo original */
@@ -304,12 +304,12 @@ void pantalla_bienvenida(void)
             /* Desplazar posicion y en base a nuevo incremento */
             desplazamiento_y[i] += incrementos_y[i];
 
-            /* Dibujar letra en nueva posición */
+            /* Dibujar letra en nueva posiciï¿½n */
             letra_actual[0] = titulo_os[i];
             setcolor(arcoiris_titulo[(i + iteracion) % CANTIDAD_LETRAS]); /* Ajustar carrusel de colores */
             outtextxy(posicion_x_actual, posicion_y + desplazamiento_y[i], letra_actual);
             
-            /* Avanzar posición para la siguiente letra */
+            /* Avanzar posiciï¿½n para la siguiente letra */
             posicion_x_actual += textwidth(letra_actual);
         }
 
@@ -330,7 +330,7 @@ void pantalla_bienvenida(void)
             COPY_PUT
         );
         
-        /* Avanzar posición para la siguiente letra */
+        /* Avanzar posiciï¿½n para la siguiente letra */
         posicion_x_actual += textwidth(letra_actual);
     }
     outtextxy(posicion_x, posicion_y, titulo_os); /* Colocar titulo en blanco */
@@ -344,7 +344,7 @@ void pantalla_bienvenida(void)
         setcolor(i < 8 ? arcoiris_titulo[i] : WHITE); /* El 8 es la posicion de la ultima letra de "NeoRetro" */
         outtextxy(posicion_x_actual, posicion_y, letra_actual);
         
-        /* Avanzar posición para la siguiente letra */
+        /* Avanzar posiciï¿½n para la siguiente letra */
         posicion_x_actual += textwidth(letra_actual);
         delay(RETRASO_CORTO);
     }
@@ -355,7 +355,7 @@ void pantalla_bienvenida(void)
     delay(RETRASO_LARGO + 2000); /* Retraso de espera */
 
     /* 16. Liberar memoria de buffers de fondo */
-    liberar_arreglo(buffers_fondo, CANTIDAD_LETRAS);
+    liberar_arreglo((void *) buffers_fondo, CANTIDAD_LETRAS);
 }
 
 /*

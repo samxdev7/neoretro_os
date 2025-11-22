@@ -61,7 +61,7 @@ int mostrar_menu_desplegable(unsigned short n_opciones, char **opciones_texto, i
 int ocultar_menu_desplegable(int **buffer);
 
 /* Seccion 5: Funciones de control de barra de ventana */
-unsigned char manejar_barra_ventana(
+short manejar_barra_ventana(
     Component *cerrar,
     Component *despliegue, 
     short mouse_x, short mouse_y,
@@ -405,6 +405,7 @@ int mostrar_menu_desplegable(unsigned short n_opciones, char **opciones_texto, i
 
     /* 11. Se muestra cada uno de los titulos de opciones a traves de 
     un bucle y operaciones */
+    setcolor(BLACK);
     for (i = 0; i < n_opciones; i++) {
         outtextxy(
             interfaz_desplegable.x1 + padding,
@@ -414,7 +415,6 @@ int mostrar_menu_desplegable(unsigned short n_opciones, char **opciones_texto, i
     }
 
     /* 12. Se dibuja la linea separadora de la opcion "Salir" y el resto de opciones */
-    setcolor(BLACK);
     if (n_opciones > 0) { /* Esta solo se mostrara si hay mas de una opcion */
         line(
             interfaz_desplegable.x1 + padding,
@@ -465,11 +465,11 @@ int ocultar_menu_desplegable(int **buffer)
 }
 
 /* Seccion 5: Funciones de control de barra de ventana */
-
 /*
     manejar_barra_ventana()
     - Administra la logica interna de la barra de ventana, administrando
-    principalmente la logica de sus botones.
+    principalmente la logica de sus botones. Para que funcione correctamente
+    debe estar englobada por una condicion de click.
     
     Parametros:
     Component *cerrar: 
@@ -487,9 +487,12 @@ int ocultar_menu_desplegable(int **buffer)
     int **desplegable_buffer:
         Puntero a buffer de la zona marcada por el menu desplegable.
     
-    Retorna uno si se debe salir, si no retorna cero.
+    Retorna:
+    - La cantidad de opciones si se debe salir.
+    - La opcion correspondiente a su indice en caso de su seleccion.
+    - Fuera de los casos anteriores, retorna -1.
 */
-unsigned char manejar_barra_ventana(
+short manejar_barra_ventana(
     Component *cerrar,
     Component *despliegue, 
     short mouse_x, short mouse_y,
@@ -498,26 +501,28 @@ unsigned char manejar_barra_ventana(
     char **opciones_desplegables,
     int **desplegable_buffer
 ) {
-    /* 1. Manejar la logica del boton para cerrar */
-    if (detectar_click_componente(cerrar, mouse_x, mouse_y)) return n_opciones;
-    
-    /* 2. Alternar estados del boton de menu de despliegue */
-    if (detectar_click_componente(despliegue, mouse_x, mouse_y)) 
+    /* Manejar logica de componentes de barra de tareas */
+    if (mclick() == 1)
     {
-        /* Se detecta click en el boton y se verifica si no esta activo */
-        if (!*despliegue_activo) {
-            /* Si es el caso se muestra el menu desplegable */
-            mostrar_menu_desplegable(n_opciones, opciones_desplegables, desplegable_buffer);
-            *despliegue_activo = 1; /* Y el estado cambia */
-        } else {
-            /* Si esta activo y se presiona se oculta el menu desplegable */
-            ocultar_menu_desplegable(desplegable_buffer);
-            *despliegue_activo = 0; /* Y el estado cambia xd */
+        /* 1. Manejar la logica del boton para cerrar */
+        if (mouse_sobre_componente(cerrar, mouse_x, mouse_y)) return n_opciones;
+        
+        /* 2. Manejar menu de despliegue */
+        if (mouse_sobre_componente(despliegue, mouse_x, mouse_y)) 
+        {
+            /* Se muestra en caso de que no esta activo (y se activa bandera para
+            manejar su logica posteriormente) */
+            if (!*despliegue_activo) /* Si es el caso se muestra el menu desplegable */
+            {
+                mostrar_menu_desplegable(n_opciones, opciones_desplegables, desplegable_buffer);
+                *despliegue_activo = 1; /* Y el estado cambia */
+            } 
         }
     }
-    
+        
     /* 3. Se detecta que opcion se selecciono del menu desplegable */
-    if (*despliegue_activo && mclick()) { /* Solo aplica si el menu desplegable esta activo y se hizo click */
+    if (*despliegue_activo && (mclick() == 1)) /* Solo aplica si el menu desplegable esta activo */
+    { 
         /* A traves de esta funcion y las coordenadas iniciales del menu de despliegue
         se realiza la seleccion de la opcion elegida en el menu de despliegue */
         short opcion_seleccionada = detectar_opcion_menu(12, 12, mouse_x, mouse_y, n_opciones, opciones_desplegables);
@@ -526,11 +531,11 @@ unsigned char manejar_barra_ventana(
         ocultar_menu_desplegable(desplegable_buffer);
         *despliegue_activo = 0; /* Y ahora el despliegue no esta activo */
         
-        /* Caso: se eligio alguna de las opciones */
-        if (opcion_seleccionada != -1) return opcion_seleccionada;
+        /* Como se eligio alguna de las opciones devuelve esa opcion */
+        if (opcion_seleccionada != 1) return opcion_seleccionada;
     }
-    
-    /* Caso: no se eligio alguna de las opciones */
+        
+    /* Siempre devuelve -1 como caso por defecto */
     return -1;
 }
 
@@ -561,7 +566,6 @@ short detectar_opcion_menu(
     char **opciones_desplegables
 ) {
     /* 1. Definir variables importantes para calculos aritmeticos */
-    
     /* Distancias para calcular los espacios de opciones */
     short ancho_maximo = textwidth("Salir");      /* Ancho maximo */
     short alto_opcion = textheight("Salir") + 5;  /* Alto + Padding */
@@ -590,14 +594,11 @@ short detectar_opcion_menu(
         /* Se trabaja opcion por opcion */
         short y_opcion = y + (alto_opcion * i);
 
-        /* Se detecta si el raton pulso en esa opcion */
-        if (mouse_y >= y_opcion && mouse_y < y_opcion + alto_opcion &&
-            mouse_x >= xi && mouse_x <= xf) {
-
-            /* En caso de seleccionar una opcion del menu de despliegue devuelve
-            su respectivo indice */
+        /* Si se detecta que el raton pulso en esa opcion se devuelve
+        su iteracion correspondiente */
+        if (mouse_y >= y_opcion && mouse_y < y_opcion + alto_opcion 
+            && mouse_x >= xi && mouse_x <= xf)
             return i;
-        }
     }
     
     /* 5. Verificar opcion "Salir" (en caso de no haber pulsado las opciones anteriores) */
@@ -605,10 +606,9 @@ short detectar_opcion_menu(
     y_salir = y + (alto_opcion * n_opciones);
 
     /* Si se detecta que se pulso la opcion salir se devuelve el indice de esa opcion */
-    if (mouse_y >= y_salir && mouse_y < y_salir + alto_opcion &&
-        mouse_x >= xi && mouse_x <= xf) {
+    if (mouse_y >= y_salir && mouse_y < y_salir + alto_opcion 
+        && mouse_x >= xi && mouse_x <= xf) 
         return n_opciones;
-    }
     
     return -1; /* Se devuelve -1 si no se selecciono nada */
 }

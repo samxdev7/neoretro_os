@@ -70,23 +70,13 @@ void msituar(int x, int y)
 /*************************************************/
 int mclick(void)
 {
-    static int previous_state = 0;
-    int actual_state;
-    int r = 0;
-    
-    reg.x.ax = 0x5;
-    reg.x.bx = 0;
-    int86(0x33, &reg, &reg);
-    actual_state = 0;
-    
-    if ((reg.x.ax) & 1) actual_state = 1;
-    else if ((reg.x.ax>>1) & 1) actual_state = 2;
-    
-    if (actual_state == 1 && previous_state == 0) {
-        r = 1;
-    }
-    previous_state = actual_state;
-    return r;
+	int r = 0;
+	reg.x.ax = 0x5;
+	reg.x.bx = 0;
+	int86(0x33, &reg, &reg);
+	if ((reg.x.ax) & 1) r = 1;
+	else if ((reg.x.ax>>1) & 1) r = 2;
+	return r;
 }
 
 /*************************************************/

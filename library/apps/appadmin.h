@@ -492,6 +492,29 @@ int ocultar_menu_desplegable(int **buffer)
     - La opcion correspondiente a su indice en caso de su seleccion.
     - Fuera de los casos anteriores, retorna -1.
 */
+/*
+    manejar_barra_ventana()
+    - Administra la logica interna de la barra de ventana, administrando
+    principalmente la logica de sus botones.
+    
+    Parametros:
+    Component *cerrar: 
+        Componente asociado al boton de cerrar.
+    Component *despliegue: 
+        Componente asociado al boton de menu de despliegue.
+    short mouse_x, short mouse_y: 
+        Coordenadas del mouse en (x, y).
+    unsigned char *despliegue_activo: 
+        Indicacion si el menu de despliegue esta activo.
+    unsigned char n_opciones:
+        Cantidad de opciones que tiene el menu desplegable.
+    char **opciones_desplegables:
+        Matriz de cadenas que contienen los titulos de las opciones del desplegable.
+    int **desplegable_buffer:
+        Puntero a buffer de la zona marcada por el menu desplegable.
+    
+    Retorna uno si se debe salir, si no retorna cero.
+*/
 short manejar_barra_ventana(
     Component *cerrar,
     Component *despliegue, 
@@ -501,28 +524,32 @@ short manejar_barra_ventana(
     char **opciones_desplegables,
     int **desplegable_buffer
 ) {
-    /* Manejar logica de componentes de barra de tareas */
+
     if (mclick() == 1)
     {
         /* 1. Manejar la logica del boton para cerrar */
         if (mouse_sobre_componente(cerrar, mouse_x, mouse_y)) return n_opciones;
         
-        /* 2. Manejar menu de despliegue */
+        /* 2. Alternar estados del boton de menu de despliegue */
         if (mouse_sobre_componente(despliegue, mouse_x, mouse_y)) 
         {
-            /* Se muestra en caso de que no esta activo (y se activa bandera para
-            manejar su logica posteriormente) */
-            if (!*despliegue_activo) /* Si es el caso se muestra el menu desplegable */
-            {
+            /* Se detecta click en el boton y se verifica si no esta activo */
+            if (!*despliegue_activo) {
+                /* Si es el caso se muestra el menu desplegable */
                 mostrar_menu_desplegable(n_opciones, opciones_desplegables, desplegable_buffer);
                 *despliegue_activo = 1; /* Y el estado cambia */
-            } 
+            } else {
+                /* Si esta activo y se presiona se oculta el menu desplegable */
+                ocultar_menu_desplegable(desplegable_buffer);
+                *despliegue_activo = 0; /* Y el estado cambia xd */
+            }
+
+            return -1;
         }
     }
-        
+    
     /* 3. Se detecta que opcion se selecciono del menu desplegable */
-    if (*despliegue_activo && (mclick() == 1)) /* Solo aplica si el menu desplegable esta activo */
-    { 
+    if (*despliegue_activo && mclick()) { /* Solo aplica si el menu desplegable esta activo y se hizo click */
         /* A traves de esta funcion y las coordenadas iniciales del menu de despliegue
         se realiza la seleccion de la opcion elegida en el menu de despliegue */
         short opcion_seleccionada = detectar_opcion_menu(12, 12, mouse_x, mouse_y, n_opciones, opciones_desplegables);
@@ -531,11 +558,11 @@ short manejar_barra_ventana(
         ocultar_menu_desplegable(desplegable_buffer);
         *despliegue_activo = 0; /* Y ahora el despliegue no esta activo */
         
-        /* Como se eligio alguna de las opciones devuelve esa opcion */
-        if (opcion_seleccionada != 1) return opcion_seleccionada;
+        /* Caso: se eligio alguna de las opciones */
+        if (opcion_seleccionada != -1) return opcion_seleccionada;
     }
-        
-    /* Siempre devuelve -1 como caso por defecto */
+    
+    /* Caso: no se eligio alguna de las opciones */
     return -1;
 }
 

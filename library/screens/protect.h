@@ -133,7 +133,7 @@ void dibujarFondo() {
 }
 
 /* ==========================================================
-   Funcion: Actualizar Posición
+   Funcion: Actualizar Posiciï¿½n
    ========================================================== */
 void actualizarPosicion(int *x, int *y, int dx, int dy) {
     *x += dx;

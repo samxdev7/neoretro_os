@@ -277,7 +277,8 @@ void renderizar_componente(Component *componente)
 	con el componente de borde de ventana.
 	char *texto: Cadena de texto la cual contendra el componente.
 */
-void renderizar_componente_texto(Component *componente, char *texto) {
+void renderizar_componente_texto(Component *componente, char *texto) 
+{
     /* 1. Declaracion de variables */
 	short texto_x, texto_y;
     
@@ -622,5 +623,4 @@ void ajustar_texto_largo_componente(Component *componente, char *texto, short *t
     /* 17. Liberar memoria */
     free(texto_temporal);
 }
-
 #endif

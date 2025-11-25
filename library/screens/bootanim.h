@@ -225,7 +225,7 @@ void pantalla_bienvenida(void)
     setcolor(WHITE);
     settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
 
-    /* 6. Calcular posici�n central del t�tulo */
+    /* 6. Calcular posicion central del titulo */
     /* Esto se hace con el objetivo de mostrar el titulo por el centro y ubicar
     las letras correctamente en esta posicion, la cual se divide la diferencia
     entre el tamano total y la dimension del texto */
@@ -241,7 +241,7 @@ void pantalla_bienvenida(void)
     ancho_letra = textwidth(letra_actual);
     alto_letra = textheight(letra_actual);
     
-    /* 9. Calcular tama�o del buffer para cada letra */
+    /* 9. Calcular tamano del buffer para cada letra */
     tamano_buffer = imagesize(0, 0, ancho_letra, alto_letra);
     
     /* 10. Inicializar buffers... */
@@ -263,7 +263,7 @@ void pantalla_bienvenida(void)
     posicion_x_actual = posicion_x;
     for (i = 0; i < CANTIDAD_LETRAS; i++)
     {
-        /* Capturar el fondo en la posici�n donde estara la letra */
+        /* Capturar el fondo en la posicion donde estara la letra */
         getimage(
             posicion_x_actual, 
             posicion_y, 
@@ -275,17 +275,17 @@ void pantalla_bienvenida(void)
         /* Guardar la letra actual para despues medir su ancho */
         letra_actual[0] = titulo_os[i];
         
-        /* Medir ancho y avanzar posici�n para la siguiente letra */
+        /* Medir ancho y avanzar posicion para la siguiente letra */
         posicion_x_actual += textwidth(letra_actual);
     }
 
-    /* 12. Animaci�n: agitar letras */
+    /* 12. Animacion: agitar letras */
     for (iteracion = 1; iteracion <= MAXIMO_ITERACIONES; iteracion++)
     {
         /* Se captura la posicion en x de la letra actual */
         posicion_x_actual = posicion_x;
 
-        /* Dibujar cada letra en nueva posici�n */
+        /* Dibujar cada letra en nueva posicion */
         for (i = 0; i < CANTIDAD_LETRAS; i++)
         {
             /* Restaurar el fondo original */
@@ -304,12 +304,12 @@ void pantalla_bienvenida(void)
             /* Desplazar posicion y en base a nuevo incremento */
             desplazamiento_y[i] += incrementos_y[i];
 
-            /* Dibujar letra en nueva posici�n */
+            /* Dibujar letra en nueva posicion */
             letra_actual[0] = titulo_os[i];
             setcolor(arcoiris_titulo[(i + iteracion) % CANTIDAD_LETRAS]); /* Ajustar carrusel de colores */
             outtextxy(posicion_x_actual, posicion_y + desplazamiento_y[i], letra_actual);
             
-            /* Avanzar posici�n para la siguiente letra */
+            /* Avanzar posicion para la siguiente letra */
             posicion_x_actual += textwidth(letra_actual);
         }
 
@@ -330,7 +330,7 @@ void pantalla_bienvenida(void)
             COPY_PUT
         );
         
-        /* Avanzar posici�n para la siguiente letra */
+        /* Avanzar posicion para la siguiente letra */
         posicion_x_actual += textwidth(letra_actual);
     }
     outtextxy(posicion_x, posicion_y, titulo_os); /* Colocar titulo en blanco */
@@ -344,7 +344,7 @@ void pantalla_bienvenida(void)
         setcolor(i < 8 ? arcoiris_titulo[i] : WHITE); /* El 8 es la posicion de la ultima letra de "NeoRetro" */
         outtextxy(posicion_x_actual, posicion_y, letra_actual);
         
-        /* Avanzar posici�n para la siguiente letra */
+        /* Avanzar posicion para la siguiente letra */
         posicion_x_actual += textwidth(letra_actual);
         delay(RETRASO_CORTO);
     }
@@ -441,7 +441,6 @@ void apagar_sistema_operativo(void)
     liberar_elemento(buffer_fondo);
 
     /* Poner fondo negro durante unos segundos */
-    set_bg(BLACK);
-    delay(2000);
+    set_bg(BLACK); delay(2000);
 }
 #endif

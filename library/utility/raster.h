@@ -13,6 +13,7 @@
 	- Posiciones para rasterizar
 	- EFICIENCIA EXTREMA DE DIBUJADO!!!!!
 
+    - Johanna Castellon
     - Samuel Rueda
 */
 

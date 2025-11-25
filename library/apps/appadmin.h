@@ -52,6 +52,7 @@ void renderizar_barra_de_ventana(
     Component *despliegue,
     char *titulo
 );
+void dibujar_mensaje_ventana(char *texto);
 
 /* Seccion 4: Funciones de buffer de menu desplegable */
 void crear_buffer_desplegable(Component *interfaz, int **buffer);
@@ -231,6 +232,30 @@ void renderizar_barra_de_ventana(
     renderizar_componente_texto(barra_de_ventana, titulo);
     renderizar_boton_cerrar(cerrar);
     renderizar_boton_despliegue(despliegue);
+}
+
+/*
+    dibujar_mensaje_ventana();
+
+    Funcion que dibuja una barra de ventana especifica para indicar
+    un mensaje en una app. Para ser utilizado se debe utilizar en un bucle
+    que maneje la app fuera de la barra de ventana. Ej: El campo
+    de texto utilizado para el bloc de notas, util para indicar
+    atajos.
+
+    Parametros:
+    - char texto: Cadena perteneciente al texto a mostrar en 
+    la barra.
+*/
+void dibujar_mensaje_ventana(char *texto)
+{
+    /* 1. Se limpia la barra, desactivando su funcionalidad temporalmente */
+    setfillstyle(SOLID_FILL, WHITE);
+    bar(0, 0, WIDTH, 11);
+
+    /* 2. Se imprime mensaje de aviso */
+    setcolor(BLACK);
+    outtextxy((WIDTH - textwidth(texto)) / 2 , 0, texto);
 }
 
 /* Seccion 4: Funciones de buffer de menu desplegable */

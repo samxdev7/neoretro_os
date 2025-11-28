@@ -23,7 +23,6 @@
 #include <stdlib.h>
 #include <dos.h>
 #include <string.h>
-#include <ctype.h>
 
 /*
     =======================================
@@ -40,15 +39,13 @@
 */
 #define ANCHO_CARACTERES_BLOC 7     /* Ancho fijo para caracteres en Campos de Texto */
 #define ALTO_CARACTERES_BLOC  12    /* Alto fijo para caracteres en Campos de Texto */
-
-#define FONDO_CAMPO    19
+#define FONDO_CAMPO    19           /* Color del fondo */
 
 /*
     =======================================
     Definicion de Estructuras / Uniones
     =========================================
 */
-
 /* 
 	struct CampoTexto
 	Estructura responsable de manejar el bloc de notas, trabajandolo a traves de una matriz
@@ -70,7 +67,6 @@ typedef struct {
     Definicion de Enums
     =========================================
 */
-
 /*
     enum CommonKeys
     Estructura enum que categoriza el ASCII de las teclas
@@ -85,16 +81,6 @@ typedef enum {
     SPACE      = 32,    /* Espacio */
     SWUNG_DASH = 126    /* Tilde */
 } CommonKeys;
-
-/*
-    enum CampTextProcess
-    Estructura enum que categoriza los modos de procesamiento
-    de texto, si este procesa o guarda los resultados.
-*/
-typedef enum {
-    PROCESAMIENTO,
-    GUARDADO
-} CampTextProcess;
 
 /*
     =======================================
@@ -121,7 +107,7 @@ void insertar_caracter_bloc(CampoTexto *bloc, char tecla);
 void eliminar_caracter_bloc(CampoTexto *bloc);
 
 /* Seccion 4: Manejo de entradas */
-short procesar_campo_texto(CampoTexto *bloc, CampTextProcess modo);
+void procesar_campo_texto(CampoTexto *bloc);
 
 /*
     =======================================
@@ -461,7 +447,7 @@ void eliminar_caracter_bloc(CampoTexto *bloc)
     Devuelve 1 si se salio con la opcion de guardar seleccionada.
     Devuelve 0 si se salio pero sin gurardar.
 */
-short procesar_campo_texto(CampoTexto *bloc, CampTextProcess modo)
+void procesar_campo_texto(CampoTexto *bloc)
 {
     /* 1. Se declara una variable para procesar las entradas
     y otra para trabajar con el tamano total del campo de texto */
@@ -484,7 +470,7 @@ short procesar_campo_texto(CampoTexto *bloc, CampTextProcess modo)
            
         /* Caso: Escape/ESCAPE/13 */
         if (tecla == ESCAPE)
-            return 0;  /* Se desactiva el foco, y NO se guarda */
+            return;  /* Se desactiva el foco (se detiene el proceso de campo de texto) */
     
         /* Caso: Retroceso/BACKSPACE/8 */
         else if (tecla == BACKSPACE)
@@ -493,23 +479,8 @@ short procesar_campo_texto(CampoTexto *bloc, CampTextProcess modo)
             cursor_bloc(bloc, 1); eliminar_caracter_bloc(bloc);
         }
 
-        /* Si el modo es de guardado se consideran mas validaciones y acciones */
-        if (modo == GUARDADO)
-        {
-            /* Caso: Enter/ENTER/13 + El modo es de guardado */
-            if (tecla == ENTER && bloc -> texto_buffer[0][0] != '\0')
-                return 1;  /* Se desactiva el foco, pero se guarda */
-            
-            /* Caso: No se escribe un alfanumerico */
-            if (isdigit(tecla) || !isalpha(tecla))
-            { while (kbhit()) getch(); continue; }
-
-            /* Caso: se escribe algo en minusculas */
-            if (islower(tecla)) tecla = toupper(tecla);
-        }
-
         /* Caso: cualquier imprimible si la longitud no sobrepasa el limite */
-        if (tecla >= SPACE && tecla <= SWUNG_DASH && bloc -> longitud < limite_campo)
+        else if (tecla >= SPACE && tecla <= SWUNG_DASH && bloc -> longitud < limite_campo)
         {
             /* Se dibuja primero el cursor, luego la entrada */
             cursor_bloc(bloc, 2); insertar_caracter_bloc(bloc, tecla);

@@ -73,7 +73,6 @@ static char *protectores_opciones_titulos[PROTECTORES_CANTIDAD] = {
     Definicion de Enums
     =========================================
 */
-
 /*
     Enum ConfigMode
     Estructura enum correspondiente con el modo actual de las opciones
@@ -101,16 +100,17 @@ void renderizar_modo_actual(ConfigMode modo, Component tema_opciones[], Componen
 /* Seccion 3: Limpieza de areas */
 void limpiar_area_configuraciones(void);
 
-/* Seccion 4: Guardado/cargado de fondos y protectores de pantalla */
+/* Seccion 4: Guardado/cargado de fondos */
 void guardar_fondo(int fondo);
 int cargar_fondo(void);
-void renderizar_fondo_de_pantalla(char *nombre_bin, int tipo);
+void renderizar_fondo_de_pantalla(char *nombre_bin, short tipo);
 
+/* Seccion 5: Guardado/cargado protectores de pantalla */
 void guardar_protector(int protector);
 int cargar_protector(void);
 void colocar_protector_pantalla(void);
 
-/* Seccion 5: Manejo de logica de app (principal) */
+/* Seccion 6: Manejo de logica de app (principal) */
 void app_configuraciones(void);
 
 /*
@@ -332,7 +332,8 @@ int cargar_fondo(void)
 /*
     guardar_fondo();
     Se encarga del guardado de la ultima configuracion realizada por el usuario,
-    recibiendo como parametro el fondo seleccionado para guardarlo en un fichero .dat.
+    recibiendo como parametro el fondo seleccionado para guardarlo en un fichero .dat,
+    que corresponde desde el 1 hasta el 5.
 */
 void guardar_fondo(int fondo)
 {
@@ -346,8 +347,22 @@ void guardar_fondo(int fondo)
     fclose(f);  /* Una vez escrito se cierra */
 }
 
-/**/
-void renderizar_fondo_de_pantalla(char *nombre_bin, int tipo)
+/*
+    renderizar_fondo_de_pantalla();
+    Funcion que renderiza el fondo de pantalla segun el fondo seleccionado
+    actualmente, para ello se trabaja con las funciones anteriormente
+    mencionadas en desktop.h, para poder manejar el fondo seleccionado.
+
+    char *nombre_bin: Cadena que corresponde con el fichero .bin la
+    cual es el nombre del fondo a pantalla a renderizar.
+    short tipo: Corresponde a que tipo de fondo se renderizara, siendo
+    los siguientes:
+    - 1/(200x200) = Corresponde con el fondo de pantalla por defecto, la
+    cual trabaja con una resolucion de 200x200 pixeles.
+    - 2/(320x200) = Corresponde con el resto de fondos que encajan perfectamente
+    en pantalla.
+*/
+void renderizar_fondo_de_pantalla(char *nombre_bin, short tipo)
 {
     /* 1. Se declara un buffer de fichero y se abre el fichero del fondo como lectura binaria */
     FILE *fondo = fopen(nombre_bin, "rb");
@@ -356,22 +371,27 @@ void renderizar_fondo_de_pantalla(char *nombre_bin, int tipo)
     /* 2. Se dibuja el fondo con rasterizado */
     switch (tipo)
     {
-        case 1: 
+        case 1:  /* Caso: Si se decide rasterizar el primer fondo */
             dibujar_con_rasterizado_pos(fondo, CENTER, 200, 200, WIDTH, HEIGHT);
             break;
-        case 2:
+        case 2:  /* Caso: Se decide rasterizar otro fondo */
             dibujar_con_rasterizado_pos(fondo, TOP_LEFT, 320, 200, WIDTH, HEIGHT);
             break;
-        default:
+        default: /* Defecto: Valida en todo caso la opcion seleccionada */
             dibujar_con_rasterizado_pos(fondo, CENTER, 200, 200, WIDTH, HEIGHT);
     }
-
-    /* 3. Se cierra el fichero de fondo */
-    fclose(fondo);
+    fclose(fondo); /* Se cierra el fichero de fondo al renderizarse */
 }
 
+/* Seccion 5: Guardado/cargado protectores de pantalla */
 /*
+    guardar_protector();
+    Funcion que guarda el protector de pantalla seleccionado en las 
+    configuraciones a traves de un fichero .dat.
 
+    Parametros:
+    - int protector: Corresponde con el protector seleccionado
+    en las configuraciones (desde 1 al 3).
 */
 void guardar_protector(int protector)
 {
@@ -385,28 +405,41 @@ void guardar_protector(int protector)
     fclose(f);  /* Una vez escrito se cierra */
 }
 
+/*
+    cargar_protector();
+    Funcion que carga el protector de pantalla guardado en el fichero
+    que contiene el protector de pantalla guardado. Devuelve el protector
+    de pantalla cargado.
+*/
 int cargar_protector(void)
 {
-    /* 1. Se carga la configuracion del fondo de pantalla aplicado
-    a traves de fopen y FILE */
+    /* 1. Se carga el protector de pantalla seleccionado gracias
+    a fopen */
     FILE *f = fopen("protect.dat", "rb");
-    int protector = 1;    /* Se declara una variable por defecto del fondo */
+    int protector = 1;    /* Se declara una variable por defecto del protector */
 
-    /* 2. Si el fichero no carga correctamente se devuelve el fondo por
-    defecto */
+    /* 2. Si el fichero no carga correctamente se devuelve el protector por defecto */
     if (f == NULL) return 1;
 
-    /* 3. Se carga el fondo de pantalla con fread y se cierra el fichero */
+    /* 3. Se carga el protector de pantalla con fread y se cierra el fichero */
     fread(&protector, sizeof(int), 1, f); fclose(f);
-    return protector;   /* Al final el fondo cargado es el que se terminara devolviendo */
+    return protector;   /* Y protector cargado se devuelve */
 }
 
+/*
+    colocar_protector_pantalla();
+    Esta funcion permite cargar y ejecutar el protector de pantalla a traves
+    de las funciones anteriores. A diferencia del fondo, esta no necesita
+    depender de otra funcion mas que solo de guardado y cargado, para simplemente
+    ejecutar las funciones de protectores de pantalla a traves de un switch.
+*/
 void colocar_protector_pantalla(void)
 {
-    /* 1. Se declara un buffer de fichero y se abre el fichero del fondo como lectura binaria */
+    /* 1. Se declara una variable conteniendo el protector guardado */
     int protector_actual = cargar_protector();
 
-    /* 2. Se dibuja el fondo con rasterizado */
+    /* 2. A traves del switch se selecciona el protector seleccionado
+    para simplemente ejecutarse */
     switch (protector_actual)
     {
         case 1:  protector_1(); break;
@@ -416,7 +449,7 @@ void colocar_protector_pantalla(void)
     }
 }
 
-/* Seccion 5: Manejo de logica de app (principal) */
+/* Seccion 6: Manejo de logica de app (principal) */
 /*
     app_configuraciones();
     Funcion principal de la apps de configuraciones que maneja su logica interna.
@@ -437,8 +470,7 @@ void app_configuraciones(void)
     ConfigMode modo = MODO_TEMAS;
     ConfigMode modo_anterior = MODO_TEMAS;
 
-    /* Bandera de salida, indice y posiciones del mouse */
-    unsigned char salir = 0;
+    /* Indice y posiciones del mouse */
     short i = 0;
     short mouse_x, mouse_y;
     
@@ -467,6 +499,7 @@ void app_configuraciones(void)
     renderizar_borde(&barra_de_ventana);
     renderizar_componente_texto(&barra_de_ventana, "Configuraciones");
     renderizar_boton_cerrar(&cerrar);
+
     renderizar_componente(&opciones_seccion);
     renderizar_componente_texto(&tema_seccion, "Temas");
     renderizar_componente_texto(&protector_seccion, "Protectores de Pantalla");
@@ -506,20 +539,20 @@ void app_configuraciones(void)
         {
             /* Callback: Boton para cerrar app */
             if (mouse_sobre_componente(&cerrar, mouse_x, mouse_y))
-                salir = 1;
+                break;
             
             /* Callbacks: Secciones de Configuraciones */
             if (mouse_sobre_componente(&tema_seccion, mouse_x, mouse_y))
                 modo = MODO_TEMAS; /* Caso: seccion de temas */
-                
             else if (mouse_sobre_componente(&protector_seccion, mouse_x, mouse_y))
                 modo = MODO_PROTECTORES; /* Caso: seccion de protectores */
 
-            /* Callbacks: Opciones de fondo de pantalla */
             if (modo == MODO_TEMAS)
             {
+                /* Callbacks: Opciones de fondo de pantalla */
                 for (i = 0; i < TEMAS_CANTIDAD; i++)
                 {
+                    /* Se evalua cada componente de opcion de fondo de pantalla */
                     if (mouse_sobre_componente(&tema_opciones[i], mouse_x, mouse_y))
                         guardar_fondo(i + 1);
                 }
@@ -527,13 +560,13 @@ void app_configuraciones(void)
                 /* Callbacks: Opciones de protectores de pantalla */
                 for (i = 0; i < PROTECTORES_CANTIDAD; i++)
                 {
+                    /* Se evalua cada componente de opcion de protector de pantalla */
                     if (mouse_sobre_componente(&protector_opciones[i], mouse_x, mouse_y))
                         guardar_protector(i + 1);
                 }
             }
         }
-
-        delay(100);
-    } while (!salir); /* Condicion de salida */
+        delay(100); /* Retraso para evitar saturacion */
+    } while (1); /* Se ejecuta hasta que se decida salir */
 }
 #endif

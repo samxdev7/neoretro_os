@@ -1147,6 +1147,7 @@ void view_stats(void)
 
 void app_database(){
     char opcion[16];
+    if (kbhit()) getch();
     textcolor(YELLOW);
     cprintf("Bienvenido a base de datos de prueba\n\r");
     cprintf("Seleccione una opcion:\n\r");

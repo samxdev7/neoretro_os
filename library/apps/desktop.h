@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <dos.h>
 #include <string.h>
+#include <time.h>
 
 /*
     =======================================
@@ -26,12 +27,17 @@
     =========================================
 */
 #include "gphadmin.h"   /* Libreria que administra el modo grafico y el sistema operativo */
+#include "dynamic.h"    /* Libreria que ofrece funciones para la memoria dinamica */
 #include "raster.h"     /* Libreria encargada de administrar la rasterizacion de ficheros */
 #include "comp.h"       /* Libreria de componentes para la interactividad del sistema operativo */
 #include "appadmin.h"   /* Libreria que administra las aplicaciones del sistema operativo */
-#include "dynamic.h"    /* Libreria que ofrece funciones para la memoria dinamica */
+#include "protect.h"    /* Libreria que administra los protectores de pantalla*/
 #include "timecont.h"   /* Libreria que administra el tiempo en base a cadenas y no estructuras */
+
+#include "boolso.h"
 #include "config.h"     /* Aplicacion de configuraciones/ajustes del sistema operativo */
+#include "calc.h"       /* Aplicacion de calculadora */
+#include "filehnd.h"    /* Aplicacion de bases de datos de registro de mascotas */
 
 /*
     =======================================
@@ -134,7 +140,8 @@ typedef enum {
 */
 
 /* Seccion 1: Funciones de renderizado */
-void renderizar_fondo_de_pantalla(void);
+void aplicar_fondo(short fondo);
+void aplicar_protector(short protector);
 void cargar_y_dibujar_icono(const char *nombre_archivo, short x, short y, short ancho, short alto);
 void renderizar_texto_icono(short icono_x, short icono_y, char *texto);
 void renderizar_escritorio(Component *barra_tareas);
@@ -148,23 +155,35 @@ BootManageOS escritorio_so(void);
     Inicializacion de Funciones
     =========================================
 */
-
-/* Seccion 1: Funciones de renderizado */
 /*
-    renderizar_fondo_de_pantalla();
-    Funcion que renderiza el fondo de pantalla seleccionado (aun no implementado).
-*/
-void renderizar_fondo_de_pantalla(void)
-{
-    /* 1. Se declara un buffer de fichero y se abre el fichero del fondo como lectura binaria */
-    FILE *fondo = fopen("dinosaur.bin", "rb");
-    if (fondo == NULL) return; /* Tambien se verifica si se abrio correctamente */
-    
-    /* 2. Se dibuja el fondo con rasterizado */
-    dibujar_con_rasterizado_pos(fondo, CENTER, 200, 200, WIDTH, HEIGHT);
+    aplicar_fondo(); 
+    Se encarga que abrir el archivo que fue seleccionado como fondo de pantalla y dibujarlo.
 
-    /* 3. Se cierra el fichero de fondo */
-    fclose(fondo);
+*/
+void aplicar_fondo(short fondo){
+    switch (fondo) {
+        case 1:  renderizar_fondo_de_pantalla("dinosaur.bin", 1);  break;
+        case 2:  renderizar_fondo_de_pantalla("city.bin", 2);      break;
+        case 3:  renderizar_fondo_de_pantalla("cherries.bin", 2);  break;
+        case 4:  renderizar_fondo_de_pantalla("cattus.bin", 2);    break;
+        case 5:  renderizar_fondo_de_pantalla("snorlax.bin", 2);   break;
+        default: renderizar_fondo_de_pantalla("dinosaur.bin", 1);  break;
+    }
+}
+
+/*
+    aplicar_protector();
+    Se encarga de dibujar el protector de pantalla previamente seleccionado.                                AUN NO ESTA FUNCIONANDO
+
+*/
+void aplicar_protector(short protector)
+{
+    switch (protector) {
+        case 1:  protector_1(); break;
+        case 2:  protector_2(); break;
+        case 3:  protector_3(); break;
+        default: protector_1(); break;
+    }
 }
 
 /* 
@@ -291,15 +310,15 @@ void renderizar_escritorio(Component *barra_tareas)
     short icono;            /* Variable de indice de los iconos */
     short icono_x, icono_y; /* Variables de posicion de los iconos */
     
-    /* 2. Se dibuja el fondo de pantalla */
+    /* 2. Se carga y dibuja el fondo de pantalla */
     set_bg(WHITE);
-    renderizar_fondo_de_pantalla();
+    aplicar_fondo(cargar_fondo());
 
     /* 3. Se dibuja la barra de tareas */
     renderizar_componente(barra_tareas);
 
-    /* 4. Se colocan las configuraciones para texto */
-    colocar_configuraciones();
+    /* 4. Se configura el color de texto como negro */
+    setcolor(BLACK);
     
     /* 5. Renderizar iconos y textos de las apps en el escritorio */
     for (icono = 0; icono < ICONOS_ESCRITORIO; icono++) {
@@ -365,8 +384,7 @@ void mostrar_tiempo_escritorio(char *buffer_hora, char *buffer_fecha)
         setfillstyle(SOLID_FILL, COLOR_BARRA_TAREAS);
         bar(WIDTH - textwidth(buffer_fecha) - PADDING_TIEMPO,
             HEIGHT - textheight(buffer_hora) - 15,
-            WIDTH - PADDING_TIEMPO,
-            HEIGHT - PADDING_TIEMPO);
+            WIDTH - PADDING_TIEMPO, HEIGHT - PADDING_TIEMPO);
     }
     
     /* 3. En caso de que se haya cumplido o no la condicion anterior se muestra la hora y fecha */
@@ -404,6 +422,7 @@ BootManageOS escritorio_so(void)
     short apagar_bandera = 0, i;                                 /* Bandera e indice */
     char hora_actual[FORMATO_HORA], fecha_actual[FORMATO_FECHA]; /* Formatos de hora */
     short mouse_x, mouse_y;                                      /* Posiciones del mouse */
+    time_t tiempo_inicio = time(NULL), tiempo_fin;               /* Contadores de tiempo para protector */
 
     /* 2. Se inicializa las configuraciones de texto y del tiempo */
     colocar_configuraciones();
@@ -492,13 +511,21 @@ BootManageOS escritorio_so(void)
                     /* 4. En ese caso selecciona a la app que se toco para ejecutarse */
                     switch (i) {
                         case SISTEMA:
-                            break;
+                        {
+                            closegraph();
+                            app_database();                     /* Se ejecuta la bases de datos */
+                            if (iniciar_modo_svga_256("C:\\TC20\\BIN")) return EXIT_FAILURE;
+                            colocar_configuraciones();
+                            renderizar_escritorio(&barra_tareas);
+                            break;    
+                        }
                         case CONFIGURACIONES:
-                            app_configuraciones();
-                            mocultar();
+                            app_configuraciones(); mocultar();
                             renderizar_escritorio(&barra_tareas);
                             break;
                         case CALCULADORA:
+                            app_calculadora(); mocultar();
+                            renderizar_escritorio(&barra_tareas);
                             break;
                         case BLOC_DE_NOTAS:
                             break;
@@ -506,7 +533,8 @@ BootManageOS escritorio_so(void)
                             break;
                         }
 
-                    mver(); /* Se hailita el mouse */
+                    mver(); /* Se habilita el mouse */
+                    tiempo_inicio = time(NULL);
 
                     /* Una vez realizada las operaciones, se detiene el bucle */
                     break;
@@ -525,17 +553,35 @@ BootManageOS escritorio_so(void)
 							accion = ACCION_APAGAR;
                             break;
                         case ICONO_REINICIAR:
+                            apagar_bandera = 1;
+							accion = ACCION_REINICIAR;
                             break;
                         case ICONO_SUSPENDER:
+                            mocultar();
+                            colocar_protector_pantalla();
+                            apagar_bandera = 1;
+							accion = ACCION_SUSPENDER;
+                            mver();
                             break;
                         case ICONO_CREDITOS:
                             break;
                     }
+                    tiempo_inicio = time(NULL);
 
                     /* Una vez realizada las operaciones, se detiene el bucle */
                     break;
                 }
             }
+        }
+
+        tiempo_fin = time(NULL);
+        if (difftime(tiempo_fin, tiempo_inicio) == 60)
+        {
+            mocultar();
+            colocar_protector_pantalla();
+            apagar_bandera = 1;
+            accion = ACCION_SUSPENDER;
+            mver();
         }
 
         delay(100); /* Para evitar saturacion del rendimiento se implementa un retraso */
@@ -544,4 +590,4 @@ BootManageOS escritorio_so(void)
     mocultar();
 	return accion;
 }
-#endif
+#endif

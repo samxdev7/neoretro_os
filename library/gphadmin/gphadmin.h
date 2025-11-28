@@ -126,7 +126,6 @@ void colocar_configuraciones(void)
     /* Definir color y fuente de letra */
     setcolor(BLACK);
     settextstyle(SMALL_FONT, HORIZ_DIR, 4);
-    settextjustify(LEFT_TEXT, TOP_TEXT);
 }
 
 /* 

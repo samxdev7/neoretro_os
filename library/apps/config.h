@@ -14,6 +14,7 @@
     producto de ello a la derecha se muestran las opciones de tema
     o protectores de pantalla.
 
+    - Gabriela Ruiz
 	- Samuel Rueda
 */
 
@@ -43,7 +44,6 @@
     Declaracion de Directivas
     =========================================
 */
-
 #define TEMAS_CANTIDAD 5        /* Cantidad de opciones de los temas */
 #define PROTECTORES_CANTIDAD 3  /* Cantidad de opciones de los protectores */
 
@@ -52,18 +52,14 @@
     Definicion de Variables Globales
     =========================================
 */
-/* Arreglo que contiene la paleta de temas a mostrar como opciones en la seccion de 
+/* Arreglo que contiene la paleta de temas a mostrar como opciones en la seccion de
 temas */
 static short temas_colores[TEMAS_CANTIDAD] = {29, 109, 39, 49, 54};
 
 /* Titulos correspondiente con las opciones de temas */
 static char *temas_opciones_titulos[TEMAS_CANTIDAD] = {
-        "Vanilla",
-        "Morado",
-        "Rojo",
-        "Verde",
-        "Azul"
-    };
+    "Vanilla", "Morado", "Rojo", "Verde", "Azul"
+};
 
 /* Titulos pertenecientes a las opciones de protectores de pantallas */
 static char *protectores_opciones_titulos[PROTECTORES_CANTIDAD] = {
@@ -105,7 +101,16 @@ void renderizar_modo_actual(ConfigMode modo, Component tema_opciones[], Componen
 /* Seccion 3: Limpieza de areas */
 void limpiar_area_configuraciones(void);
 
-/* Seccion 4: Manejo de logica de app (principal) */
+/* Seccion 4: Guardado/cargado de fondos y protectores de pantalla */
+void guardar_fondo(int fondo);
+int cargar_fondo(void);
+void renderizar_fondo_de_pantalla(char *nombre_bin, int tipo);
+
+void guardar_protector(int protector);
+int cargar_protector(void);
+void colocar_protector_pantalla(void);
+
+/* Seccion 5: Manejo de logica de app (principal) */
 void app_configuraciones(void);
 
 /*
@@ -135,13 +140,10 @@ void inicializar_componentes_temas(Component tema_opciones[])
         /* 3. Se construye el componente como opcion de tema */
         constructor_componente(
             &tema_opciones[i],
-            116,
-            40 + 27 * i,
-            140,
-            64 + 27 * i,
+            116, 40 + 27 * i,
+            140, 64 + 27 * i,
             temas_colores[i],
-            BLACK,
-            BLACK,
+            BLACK, BLACK,
             HOVER_DISPONIBLE
         );
 
@@ -149,8 +151,7 @@ void inicializar_componentes_temas(Component tema_opciones[])
         constructor_hover_componente(
             &tema_opciones[i],
             temas_colores[i],
-            BLACK,
-            102
+            BLACK, 102
         );
     }
 }
@@ -175,22 +176,16 @@ void inicializar_componentes_protectores(Component protector_opciones[])
         /* 3. Se inicializa el componente de opcion */
         constructor_componente(
             &protector_opciones[i],
-            116,
-            37 + 47 * i,
-            160,
-            81 + 47 * i,
-            BLACK,
-            BLACK,
-            BLACK,
+            116, 37 + 47 * i,
+            160, 81 + 47 * i,
+            BLACK, BLACK, BLACK,
             HOVER_DISPONIBLE
         );
 
         /* 4. Y se inicializa su hover */
         constructor_hover_componente(
             &protector_opciones[i],
-            102,
-            BLACK,
-            102
+            102, BLACK, 102
         );
     }
 }
@@ -311,7 +306,117 @@ void limpiar_area_configuraciones(void)
     bar(111, 12, WIDTH, HEIGHT);
 }
 
-/* Seccion 4: Manejo de logica de app (principal) */
+/* Seccion 4: Guardado/cargado de fondos y protectores de pantalla */
+/*
+    cargar_fondo();
+    Funcion que a traves de un fichero guardado con guardar_fondo
+    carga el fondo al cual se quiere aplicar el cambio. Devuelve
+    el indice del fondo que se selecciono en las opciones del menu.
+*/
+int cargar_fondo(void)
+{
+    /* 1. Se carga la configuracion del fondo de pantalla aplicado
+    a traves de fopen y FILE */
+    FILE *f = fopen("config.dat", "rb");
+    int fondo = 1;    /* Se declara una variable por defecto del fondo */
+
+    /* 2. Si el fichero no carga correctamente se devuelve el fondo por
+    defecto */
+    if (f == NULL) return 1;
+
+    /* 3. Se carga el fondo de pantalla con fread y se cierra el fichero */
+    fread(&fondo, sizeof(int), 1, f); fclose(f);
+    return fondo;   /* Al final el fondo cargado es el que se terminara devolviendo */
+}
+
+/*
+    guardar_fondo();
+    Se encarga del guardado de la ultima configuracion realizada por el usuario,
+    recibiendo como parametro el fondo seleccionado para guardarlo en un fichero .dat.
+*/
+void guardar_fondo(int fondo)
+{
+    /* 1. Se declara el apuntador a FILE para posteriormente crear (y truncar) el fichero */
+    FILE *f = fopen("config.dat", "wb");
+    if (f == NULL) return;  /* Se valida para evitar conflictos */
+    
+    /* 2. Se escribe en el fichero el fondo actual para ser cargado cuando
+    se requiera */
+    fwrite(&fondo, sizeof(int), 1, f);
+    fclose(f);  /* Una vez escrito se cierra */
+}
+
+/**/
+void renderizar_fondo_de_pantalla(char *nombre_bin, int tipo)
+{
+    /* 1. Se declara un buffer de fichero y se abre el fichero del fondo como lectura binaria */
+    FILE *fondo = fopen(nombre_bin, "rb");
+    if (fondo == NULL) return; /* Tambien se verifica si se abrio correctamente */
+    
+    /* 2. Se dibuja el fondo con rasterizado */
+    switch (tipo)
+    {
+        case 1: 
+            dibujar_con_rasterizado_pos(fondo, CENTER, 200, 200, WIDTH, HEIGHT);
+            break;
+        case 2:
+            dibujar_con_rasterizado_pos(fondo, TOP_LEFT, 320, 200, WIDTH, HEIGHT);
+            break;
+        default:
+            dibujar_con_rasterizado_pos(fondo, CENTER, 200, 200, WIDTH, HEIGHT);
+    }
+
+    /* 3. Se cierra el fichero de fondo */
+    fclose(fondo);
+}
+
+/*
+
+*/
+void guardar_protector(int protector)
+{
+    /* 1. Se declara el apuntador a FILE para posteriormente crear (y truncar) el fichero */
+    FILE *f = fopen("protect.dat", "wb");
+    if (f == NULL) return;  /* Se valida para evitar conflictos */
+    
+    /* 2. Se escribe en el fichero el fondo actual para ser cargado cuando
+    se requiera */
+    fwrite(&protector, sizeof(int), 1, f);
+    fclose(f);  /* Una vez escrito se cierra */
+}
+
+int cargar_protector(void)
+{
+    /* 1. Se carga la configuracion del fondo de pantalla aplicado
+    a traves de fopen y FILE */
+    FILE *f = fopen("protect.dat", "rb");
+    int protector = 1;    /* Se declara una variable por defecto del fondo */
+
+    /* 2. Si el fichero no carga correctamente se devuelve el fondo por
+    defecto */
+    if (f == NULL) return 1;
+
+    /* 3. Se carga el fondo de pantalla con fread y se cierra el fichero */
+    fread(&protector, sizeof(int), 1, f); fclose(f);
+    return protector;   /* Al final el fondo cargado es el que se terminara devolviendo */
+}
+
+void colocar_protector_pantalla(void)
+{
+    /* 1. Se declara un buffer de fichero y se abre el fichero del fondo como lectura binaria */
+    int protector_actual = cargar_protector();
+
+    /* 2. Se dibuja el fondo con rasterizado */
+    switch (protector_actual)
+    {
+        case 1:  protector_1(); break;
+        case 2:  protector_2(); break;
+        case 3:  protector_3(); break;
+        default: protector_1(); break;
+    }
+}
+
+/* Seccion 5: Manejo de logica de app (principal) */
 /*
     app_configuraciones();
     Funcion principal de la apps de configuraciones que maneja su logica interna.
@@ -368,28 +473,26 @@ void app_configuraciones(void)
 
     /* Renderizar modo inicial */
     renderizar_modo_actual(modo, tema_opciones, protector_opciones);
+    mver(); /* Activar raton */
     
-    /* 4. Activar raton */
-    mver();
-    
-    /* 5. Manejar los clicks de componentes a traves del do while */
+    /* 4. Manejar los clicks de componentes a traves del do while */
     do {
-        /* 6. Verificar si cambio el modo para redibujar */
+        /* 5. Verificar si cambio el modo para redibujar */
         if (modo != modo_anterior) {
             renderizar_modo_actual(modo, tema_opciones, protector_opciones);
             modo_anterior = modo;
         }
 
-        /* 7. Capturar posicion del mouse */
+        /* 6. Capturar posicion del mouse */
         mouse_x = mxpos();
         mouse_y = mypos();
         
-        /* 8. Manejar hovers comunes */
+        /* 7. Manejar hovers comunes */
         manejar_hover_componente_texto(&tema_seccion, mouse_x, mouse_y, "Temas");
         manejar_hover_componente_texto(&protector_seccion, mouse_x, mouse_y, "Protectores de Pantalla");
         manejar_hover_componente(&cerrar, mouse_x, mouse_y, renderizar_boton_cerrar);
         
-        /* 9. Manejar hovers especificos del modo actual */
+        /* 8. Manejar hovers especificos del modo actual */
         if (modo == MODO_TEMAS) {
             for (i = 0; i < TEMAS_CANTIDAD; i++)
                 manejar_hover_componente(&tema_opciones[i], mouse_x, mouse_y, NULL);
@@ -398,16 +501,38 @@ void app_configuraciones(void)
                 manejar_hover_componente(&protector_opciones[i], mouse_x, mouse_y, NULL);
         }
         
-        /* 10. Manejar clicks */
-        if (detectar_click_componente(&cerrar, mouse_x, mouse_y))
-            salir = 1; /* Caso: boton para cerrar */
-        
-        if (detectar_click_componente(&tema_seccion, mouse_x, mouse_y))
-            modo = MODO_TEMAS; /* Caso: seccion de temas */
-        
-        if (detectar_click_componente(&protector_seccion, mouse_x, mouse_y))
-            modo = MODO_PROTECTORES; /* Caso: seccion de protectores */
-        
+        /* 9. Manejar clicks */
+        if (mclick() == 1)
+        {
+            /* Callback: Boton para cerrar app */
+            if (mouse_sobre_componente(&cerrar, mouse_x, mouse_y))
+                salir = 1;
+            
+            /* Callbacks: Secciones de Configuraciones */
+            if (mouse_sobre_componente(&tema_seccion, mouse_x, mouse_y))
+                modo = MODO_TEMAS; /* Caso: seccion de temas */
+                
+            else if (mouse_sobre_componente(&protector_seccion, mouse_x, mouse_y))
+                modo = MODO_PROTECTORES; /* Caso: seccion de protectores */
+
+            /* Callbacks: Opciones de fondo de pantalla */
+            if (modo == MODO_TEMAS)
+            {
+                for (i = 0; i < TEMAS_CANTIDAD; i++)
+                {
+                    if (mouse_sobre_componente(&tema_opciones[i], mouse_x, mouse_y))
+                        guardar_fondo(i + 1);
+                }
+            } else {
+                /* Callbacks: Opciones de protectores de pantalla */
+                for (i = 0; i < PROTECTORES_CANTIDAD; i++)
+                {
+                    if (mouse_sobre_componente(&protector_opciones[i], mouse_x, mouse_y))
+                        guardar_protector(i + 1);
+                }
+            }
+        }
+
         delay(100);
     } while (!salir); /* Condicion de salida */
 }

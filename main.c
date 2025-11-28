@@ -38,7 +38,6 @@
         - Visual Studio Code
         Utilidades y soporte
         - Python
-        - ChatGPT + Deepseek
         Colaboracion y control de versiones
         - Git + GitHub
         - Discord + Notion

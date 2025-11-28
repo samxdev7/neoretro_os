@@ -59,7 +59,7 @@ typedef struct {
     short pos_cursor_x, pos_cursor_y;    /* Posicion actual del cursor */
     short total_filas,  total_columnas;  /* Dimensiones del campo de texto === PROPIEDADES */
     short inicio_x,     inicio_y;        /* Posicion en pantalla inicial del campo */             
-    short color,        fondo;           /* Color de letra/cursor + fondo/borrador */ 
+    unsigned char color, fondo;          /* Color de letra/cursor + fondo/borrador */ 
 } CampoTexto;
 
 /*
@@ -92,18 +92,18 @@ void constructor_campo_texto(
     CampoTexto *bloc, 
     short total_filas, short total_columnas, 
     short inicio_x, short inicio_y,
-    short color, short fondo
+    unsigned char color, unsigned char fondo
 );
 void destruir_campo_texto(CampoTexto *bloc);
 
 /* Seccion 2: Cursor */
-void dibujar_cursor(short pos_x, short pos_y, short color);
+void dibujar_cursor(short pos_x, short pos_y, unsigned char color);
 void cursor_bloc(CampoTexto *bloc, short modo);
 short cursor_en_limite(CampoTexto *bloc);
 
 /* Seccion 3: Dibujado de Entradas */
 void dibujar_entrada_campo(CampoTexto *bloc, short modo);
-void insertar_caracter_bloc(CampoTexto *bloc, char tecla);
+void insertar_caracter_bloc(CampoTexto *bloc, unsigned char tecla);
 void eliminar_caracter_bloc(CampoTexto *bloc);
 
 /* Seccion 4: Manejo de entradas */
@@ -135,7 +135,7 @@ void constructor_campo_texto(
     CampoTexto *bloc, 
     short total_filas, short total_columnas, 
     short inicio_x, short inicio_y,
-    short color, short fondo
+    unsigned char color, unsigned char fondo
 ) {
     /* 1. Se reserva memoria para el buffer de texto y luego se inicializa */
     short i; /* Variable de indice */
@@ -199,7 +199,7 @@ void destruir_campo_texto(CampoTexto *bloc)
     short pos_x, pos_y: Posiciones calculadas del cursor.
     short color: Color del cursor.
 */
-void dibujar_cursor(short pos_x, short pos_y, short color)
+void dibujar_cursor(short pos_x, short pos_y, unsigned char color)
 {
     /* Se define el color de linea y luego se dibuja el cursor */
     setcolor(color);
@@ -342,7 +342,7 @@ void dibujar_entrada_campo(CampoTexto *bloc, short modo)
     - char tecla: Entrada del teclado la cual sera procesada a traves de esta
     funcion.
 */
-void insertar_caracter_bloc(CampoTexto *bloc, char tecla) 
+void insertar_caracter_bloc(CampoTexto *bloc, unsigned char tecla)
 {
     /* 1. Se declaran variables para trabajar con la posicion
     del cursor del bloc, las dimensiones e inicio del campo de 

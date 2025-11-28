@@ -1,5 +1,5 @@
-#ifndef MOUSE_H
-#define MOUSE_H
+#ifndef MOUSE256_H
+#define MOUSE256_H
 
 #include <dos.h>
 
@@ -106,5 +106,29 @@ int minlimit(int x1, int y1, int x2, int y2)
         (mypos()<=y2))
         return 1;
     return 0;
+}
+
+/*************************************************/
+/* mclick() Modificado                           */
+/*************************************************/
+int mclick_M(void)  /* click con flanco */
+{
+    static int previous_state = 0;
+    int actual_state;
+    int r = 0;
+    
+    reg.x.ax = 0x5;
+    reg.x.bx = 0;
+    int86(0x33, &reg, &reg);
+    actual_state = 0;
+    
+    if ((reg.x.ax) & 1) actual_state = 1;
+    else if ((reg.x.ax>>1) & 1) actual_state = 2;
+    
+    if (actual_state == 1 && previous_state == 0) {
+        r = 1;
+    }
+    previous_state = actual_state;
+    return r;
 }
 #endif

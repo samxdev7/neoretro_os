@@ -1,5 +1,12 @@
+#ifndef BLOC_NOTAS_H
+#define BLOC_NOTAS_H
 /*
 	BLOC_NOTAS_H
+    Esta libreria integra la aplicacion de bloc de notas en 
+    el sistema operativo. Su funcionalidad se basa en campos
+    de texto utilizado para la escritura de estos bloc, aunque
+    tambien integra funciones que permiten guardar y 
+    cargar el bloc de notas.
 
 	- Samuel Rueda
 */
@@ -321,4 +328,5 @@ void app_bloc_de_notas(void)
     destruir_campo_texto(&editor);
     liberar_buffer_desplegable(&desplegable_buffer);
 	liberar_arreglo((void *) opciones_desplegables, n_opciones);
-}
+}
+#endif

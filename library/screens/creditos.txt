@@ -37,10 +37,9 @@ Desarrollo y compilacion
 - Visual Studio Code
 Utilidades y soporte
 - Python
-- ChatGPT + Deepseek
 Colaboracion y control de versiones
-- Git + GitHub
-- Discord + Notion
+-Git + GitHub
+-Discord + Notion
 ---------------------------------
 Muchisimas gracias a todos en nuestro 
 grupo 1M3 por sus consejos, su ayuda, 

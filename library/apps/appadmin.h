@@ -14,7 +14,6 @@
     Importacion de Librerias Estandar
     =========================================
 */
-
 #include <stdio.h>
 #include <conio.h>
 #include <graphics.h>
@@ -27,7 +26,6 @@
     Importacion de Librerias Personalizadas
     =========================================
 */
-
 #include "mouse256.h"   /* Modificacion de la libreria Mouse.h, utilizada para trabajar con el mouse a 320x200 */
 #include "gphadmin.h"   /* Libreria que administra el modo grafico del sistema operativo */
 #include "comp.h"       /* Libreria que administra componentes, es decir, botones, secciones, cajas de texto, etc.. */
@@ -293,7 +291,7 @@ void crear_buffer_desplegable(Component *interfaz, int **buffer)
 
     /* 5. Se valida si el calculo de la imagen es valida, sino 
     se valida puntero y se detiene la funcion. */
-    if (tamano == -1 || tamano <= 0) { *buffer = NULL; return; }
+    if (tamano <= 0) { *buffer = NULL; return; }
 
     /* 6. Si los procesos se validaron y se ejecutaron correctamente
     se realiza la reserva de memoria al *buffer */
@@ -517,29 +515,6 @@ int ocultar_menu_desplegable(int **buffer)
     - La opcion correspondiente a su indice en caso de su seleccion.
     - Fuera de los casos anteriores, retorna -1.
 */
-/*
-    manejar_barra_ventana()
-    - Administra la logica interna de la barra de ventana, administrando
-    principalmente la logica de sus botones.
-    
-    Parametros:
-    Component *cerrar: 
-        Componente asociado al boton de cerrar.
-    Component *despliegue: 
-        Componente asociado al boton de menu de despliegue.
-    short mouse_x, short mouse_y: 
-        Coordenadas del mouse en (x, y).
-    unsigned char *despliegue_activo: 
-        Indicacion si el menu de despliegue esta activo.
-    unsigned char n_opciones:
-        Cantidad de opciones que tiene el menu desplegable.
-    char **opciones_desplegables:
-        Matriz de cadenas que contienen los titulos de las opciones del desplegable.
-    int **desplegable_buffer:
-        Puntero a buffer de la zona marcada por el menu desplegable.
-    
-    Retorna uno si se debe salir, si no retorna cero.
-*/
 short manejar_barra_ventana(
     Component *cerrar,
     Component *despliegue, 
@@ -549,7 +524,6 @@ short manejar_barra_ventana(
     char **opciones_desplegables,
     int **desplegable_buffer
 ) {
-
     if (mclick() == 1)
     {
         /* 1. Manejar la logica del boton para cerrar */
@@ -568,7 +542,6 @@ short manejar_barra_ventana(
                 ocultar_menu_desplegable(desplegable_buffer);
                 *despliegue_activo = 0; /* Y el estado cambia xd */
             }
-
             return -1;
         }
     }
@@ -584,7 +557,7 @@ short manejar_barra_ventana(
         *despliegue_activo = 0; /* Y ahora el despliegue no esta activo */
         
         /* Caso: se eligio alguna de las opciones */
-        if (opcion_seleccionada != -1) return opcion_seleccionada;
+        return opcion_seleccionada;
     }
     
     /* Caso: no se eligio alguna de las opciones */

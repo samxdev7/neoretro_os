@@ -214,7 +214,7 @@ void pantalla_bienvenida(void)
     letra_actual[1] = '\0';
 
 	/* 3. Configurar y mostrar fondo de flasheo */
-	srand(time(NULL)); /* Antes se genera un numero aleatorio para elegir aleatoriamente el color del flash */
+	srand((unsigned) time(NULL)); /* Antes se genera un numero aleatorio para elegir aleatoriamente el color del flash */
 	set_bg(pasteles_flash[rand() % CANTIDAD_PASTELES_FLASH]);
     delay(RETRASO_CORTO);
 
@@ -375,7 +375,7 @@ void apagar_sistema_operativo(void)
     short *buffer_fondo;
     short tamano_buffer;
     short ancho_titulo, alto_titulo;
-    
+
     /* Posiciones */
     short pos_x_actual;
 
@@ -395,7 +395,7 @@ void apagar_sistema_operativo(void)
 
     /* Reservar memoria */
     tamano_buffer = imagesize(0, 0, ancho_titulo, alto_titulo);
-    buffer_fondo = (char *) malloc(tamano_buffer);
+	buffer_fondo = (short *) malloc(tamano_buffer);
     if (buffer_fondo == NULL) return;
 
     /* Capturar zona del titulo a ubicar para redibujar */
@@ -443,4 +443,4 @@ void apagar_sistema_operativo(void)
     /* Poner fondo negro durante unos segundos */
     set_bg(BLACK); delay(2000);
 }
-#endif
+#endif

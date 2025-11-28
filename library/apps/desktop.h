@@ -40,6 +40,7 @@
 #include "calc.h"       /* Aplicacion de calculadora */
 #include "bloc.h"       /* Aplicacion de bloc de notas */
 #include "filehnd.h"    /* Aplicacion de bases de datos de registro de mascotas */
+#include "paint.h"      /* Aplicacion de paint */
 
 /*
     =======================================
@@ -48,14 +49,14 @@
 */
 /* Cantidad de iconos */
 #define ICONOS_ESCRITORIO 5
-#define ICONOS_BARRA_TAREAS 4
+#define ICONOS_BARRA_TAREAS 3
 
 /* Coordenadas */
 #define INICIO_ICONOS_X_1      10
 #define INICIO_ICONOS_X_2      266
 #define INICIO_ICONOS_Y        5
 
-#define POS_X_BARRA_TAREAS     105
+#define POS_X_BARRA_TAREAS     112
 #define POS_Y_BARRA_TAREAS     (HEIGHT - 23)
 
 /* Tamanos */
@@ -92,7 +93,7 @@ static char *nombres_apps_escritorio[ICONOS_ESCRITORIO] = {
 
 /* Arreglo de cadenas de los ficheros de iconos de barra de tareas */
 static char *ficheros_iconos_barra_tareas[ICONOS_BARRA_TAREAS] = {
-    "SHUTVV.bin", "RESVV.bin", "SUSVV.bin", "CREDVV.bin"
+    "SHUTVV.bin", "RESVV.bin", "SUSVV.bin"
 };
 
 /*
@@ -415,7 +416,7 @@ BootManageOS escritorio_so(void)
     char hora_actual[FORMATO_HORA], fecha_actual[FORMATO_FECHA]; /* Formatos de hora */
     short apagar_bandera = 0, i;                                 /* Bandera e indice */
     short mouse_x, mouse_y;                                      /* Posiciones del mouse */
-    time_t tiempo_inicio = time(NULL), tiempo_fin;               /* Contadores de tiempo para protector (se inicia el de inicio) */
+    time_t tiempo_inicio = time(NULL);                           /* Contador de tiempo para protector (se inicia el de inicio) */
 
     /* 2. Se inicializa las configuraciones de texto y del tiempo */
     colocar_configuraciones();
@@ -521,6 +522,8 @@ BootManageOS escritorio_so(void)
                             mocultar();
                             break;
                         case PAINT: /* Caso: Paint */
+                            paint();   /* Se ejecuta la app del paint */
+                            mocultar();
                             break;
                     }
                     renderizar_escritorio(&barra_tareas); /* Se redibuja el escritorio */
@@ -565,12 +568,11 @@ BootManageOS escritorio_so(void)
         }
 
         /* === Seccion de Pantalla de Bloqueo === */
-        tiempo_fin = time(NULL);           /* Se actualiza el tiempo en una variable de fin */
         /* A traves de difftime se obtiene la diferencia entre el tiempo que inicio 
         el escritorio hasta ahorita mismo, incrementando hasta que se llegue a los 60
         segundos (1 minuto), para activar el protector de pantalla (y suspender el sistema
         operativo) */
-        if (difftime(tiempo_fin, tiempo_inicio) == 60)  
+        if (difftime(time(NULL), tiempo_inicio) == 60)  
         {
             mocultar();                   /* Se oculta el raton */
             colocar_protector_pantalla(); /* Se activa el protector de pantalla guardado */

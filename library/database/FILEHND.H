@@ -58,6 +58,11 @@
     Definicion de Constantes
     =========================================
 */
+
+/* 
+    convencion para su facil uso de true y false al igual que el tipo de datos bool
+    ya que en C no existe por defecto.
+*/
 #define ID_BASE 1000 /* ID base para propietarios y mascotas */
 
 /*
@@ -129,7 +134,6 @@ typedef struct {
                 ENTRYS_COUNT_PATH.count
                 PELUDITOS_DB.bin
 */
-/* const char ENTRYS_COUNT_PATH[40] = "C:\\TC20\\Ficheros\\Tot_entr.count"; */
 const char PELUDITOS_DB[40] = "C:\\TC20\\Ficheros\\Main_DB.bin";
 
 /*
@@ -167,6 +171,8 @@ const char diccionario[22][20] = {
     =========================================
 */
 bool verify_loaded_DB(void); /* Verificar si la base de datos ha sido cargada previamente */
+void print_info(size_t i); /* imprimir informacion de un propietario por indice */
+bool end(void); /* Verificar si la base de datos ha sido cargada previamente */
 bool verify_entry_iscorrect(Formulario_Vet_t *data); /* Verificar si los datos del formulario son correctos */
 char* limpiar_cadena(char *cadena); /* limpia la cadena de espacios y convierte la cadena en minusculas */
 bool buffers_isequal(const char *buf1, const char *buf2); /* compara dos buffers de caracteres */
@@ -185,10 +191,34 @@ void view_stats(void); /* menu para ver estadisticas de la base de datos */
 int get_next_entry_id(void) ; /* obtener el siguiente ID disponible para un nuevo propietario */
 void app_database(void); /* funcion principal de la aplicacion de base de datos */
 
-bool verify_loaded_DB(void)
+bool verify_loaded_DB()
 {
     if (db_info == NULL) return false;
     return true;
+}
+
+bool end()
+{
+    if (!verify_loaded_DB())
+    {
+        clrscr();
+        textcolor(LIGHTRED);
+        cprintf("Error: La base de datos no ha sido cargada. Por favor, carguela primero.\n\r");
+        textcolor(WHITE);
+        delay(1000);
+        return false;
+    }
+    return true;
+}
+
+void print_info(size_t i)
+{
+    printf("ID: %d\n", db_info[i].id);
+    printf("Nombre: %s\n", db_info[i].nombre_propietario);
+    printf("Direccion: %s\n", db_info[i].direccion);
+    printf("Telefono: %s\n", db_info[i].telefono);
+    printf("Nombre Mascota: %s\n", db_info[i].nombre_mascota);
+    printf("Especie: %s\n", db_info[i].especie);
 }
 
 char* limpiar_cadena(char *cadena)
@@ -278,13 +308,8 @@ bool save_new_entry(const char *file, Formulario_Vet_t *data)
 bool save_db_info(const char *file)
 {
     FILE *p;
-    if (!verify_loaded_DB()) /* verificar que la base de datos ha sido cargada previamente */
-    {
-        textcolor(LIGHTRED);
-        cprintf("Error: La base de datos no ha sido cargada. No se puede guardar.\n\r");
-        textcolor(WHITE);
+    if (!end()) /* verificar que la base de datos ha sido cargada previamente */
         return false;
-    }
 
     p = fopen(file, "wb");
     if (!p)
@@ -407,17 +432,7 @@ void load_db_info(const char *file)
     if (!p)
     {
         clrscr();
-        textcolor(LIGHTRED);
-        cprintf("Error: No se pudo abrir el archivo de la base de datos.\n\r");
-        textcolor(LIGHTGRAY);
-        cprintf("Asegurese de que el archivo exista en la ruta especificada.\n\r");
-        cprintf("Ruta del archivo: ");
-        textcolor(YELLOW);
-        cprintf("%s\n\r", file);
-        textcolor(LIGHTGRAY);
-        cprintf("Si es la primera vez,\n\ragregue una entrada y la base de datos se creara automaticamente.\n\r");
-        cprintf("Presione Enter para continuar...\n\r");
-        textcolor(WHITE);
+        printf("Error: No se pudo abrir el archivo de la base de datos.\n\r");
         getch();
         return;
     } 
@@ -473,15 +488,6 @@ void load_db_info(const char *file)
 */
 void ver_db_info(void)
 {
-    if (!verify_loaded_DB())
-    {
-        clrscr();
-        textcolor(LIGHTRED);
-        cprintf("Error: La base de datos no ha sido cargada. Por favor, carguela primero.\n\r");
-        textcolor(WHITE);
-        getch();
-        return;
-    }
 
     clrscr();
     printf("Mostrando propietarios ACTIVOS de la base de datos:\n", (int)count);
@@ -490,41 +496,15 @@ void ver_db_info(void)
         if (db_info[i].activo == false)
             continue; /* saltar registros inactivos */
         
-        textcolor(LIGHTRED);
-        cprintf("-------------------------------\n\r");
-        textcolor(CYAN);
-        cprintf("ID: ");
-        textcolor(MAGENTA);
-        cprintf("%d\n\r", db_info[i].id);
-        textcolor(CYAN);
-        cprintf("Nombre: ");
-        textcolor(MAGENTA);
-        cprintf("%s\n\r", db_info[i].nombre_propietario);
-        textcolor(CYAN);
-        cprintf("Direccion: ");
-        textcolor(MAGENTA);
-        cprintf("%s\n\r", db_info[i].direccion);
-        textcolor(CYAN);
-        cprintf("Telefono: ");
-        textcolor(MAGENTA);
-        cprintf("%s\n\r", db_info[i].telefono);
-        textcolor(CYAN);
-        cprintf("Nombre Mascota: ");
-        textcolor(MAGENTA);
-        cprintf("%s\n\r", db_info[i].nombre_mascota);
-        textcolor(CYAN);
-        cprintf("Especie: ");
-        textcolor(MAGENTA);
-        cprintf("%s\n\r", db_info[i].especie);
-        textcolor(LIGHTRED);
-        cprintf("--------------------------------\n\r");
-        textcolor(YELLOW);
-        cprintf("Entero para continuar...\n\r");
+        printf("-------------------------------\n\r");
+        print_info(i);
+        printf("--------------------------------\n\r");
+        printf("Entero para continuar...\n\r");
         textcolor(WHITE);
         getch();
     }
-    printf("Fin de la base de datos. Presione Enter para continuar...\n");
-    getch();
+    printf("Fin de la base de datos...\n");
+    delay(1000);
 }
 
 bool validate_specie(const char *especie)
@@ -642,10 +622,8 @@ bool verify_entry_iscorrect(Formulario_Vet_t *data)
         
         if (!validate_specie(esp))
         {
-            textcolor(LIGHTRED);
-            cprintf("Especie no reconocida. \n");
-            textcolor(WHITE);
-            getch();
+            printf("Especie no reconocida. \n");
+            delay(1000);
             return false; /* especie no reconocida */
         }
     }
@@ -658,25 +636,17 @@ void buscar_entrada(void)
     int i;
     char *p_DB, *q_BUFF; /* p_DB(puntero a Nombres en estructura), p_BUFF(puntero a cadena introducida por user) */
     char busqueda[50]; /* cadena que guarda el input del usuario */
-    if (!verify_loaded_DB())
+    if (!end())
     {
         clrscr();
-        textcolor(LIGHTRED);
-        cprintf("Error: La base de datos no ha sido cargada. Por favor, carguela primero.\n\r");
-        textcolor(WHITE);
-        getch();
+        printf("Error: La base de datos no ha sido cargada. Por favor, carguela primero.\n");
+        delay(1000);
         return;
     }
     limpiar_buffer();
-    printf("\n\n");
-    textcolor(YELLOW);
-    cprintf("Ingrese el Nombre del propietario a buscar: ");
-    textcolor(WHITE);
+    printf("\nIngrese el Nombre del propietario a buscar: ");
     if(leer_linea_segura(busqueda, sizeof(busqueda)) != 1)
-    {
-        mostrar_msj_err();
-        return;
-    }
+    { mostrar_msj_err(); return; }
 
     q_BUFF = limpiar_cadena(busqueda);
     
@@ -686,49 +656,20 @@ void buscar_entrada(void)
         if (buffers_isequal(p_DB, q_BUFF) == true)
         {
             clrscr();
-            textcolor(LIGHTGREEN);
-            cprintf("----- Entrada Encontrada -----\n\r");
-            textcolor(CYAN);
-            cprintf("ID: ");
-            textcolor(MAGENTA);
-            cprintf("%d\n\n\r", db_info[i].id);
-            textcolor(CYAN);
-            cprintf("Nombre: ");
-            textcolor(MAGENTA);
-            cprintf("%s\n\r", db_info[i].nombre_propietario);
-            textcolor(CYAN);
-            cprintf("Direccion: ");
-            textcolor(MAGENTA);
-            cprintf("%s\n\r", db_info[i].direccion);
-            textcolor(CYAN);
-            cprintf("Telefono: ");
-            textcolor(MAGENTA);
-            cprintf("%s\n\r", db_info[i].telefono);
-            textcolor(CYAN);
-            cprintf("Nombre Mascota: ");
-            textcolor(MAGENTA);
-            cprintf("%s\n\r", db_info[i].nombre_mascota);
-            textcolor(CYAN); 
-            cprintf("Especie: ");
-            textcolor(MAGENTA);
-            cprintf("%s\n\r", db_info[i].especie);
-            textcolor(LIGHTGREEN);
-            cprintf("------------------------------\n\n\n\r");
+            printf("----- Entrada Encontrada -----\n");
+            print_info(i);
+            printf("------------------------------\n\n");
             free(p_DB);
             free(q_BUFF);
-            textcolor(YELLOW);
-            cprintf("Enter para continuar...\n\r");
-            textcolor(WHITE);
+            printf("Enter para continuar...\n");
             getch();
             return;
         }
     }
     free(q_BUFF);
     free(p_DB);
-    textcolor(LIGHTRED);
-    cprintf("No se encontro ninguna entrada con ese nombre.\n\r");
-    textcolor(WHITE);
-    getch();
+    printf("No se encontro ninguna entrada con ese nombre.\n");
+    delay(1000);
 }
 
 void mostrar_menu(void){
@@ -807,7 +748,7 @@ void agregar_nueva_entrada(void)
         {
             clrscr();
             textcolor(LIGHTRED);
-            cprintf("Error: Algunos campos contienen caracteres invalidos.\n\rTodos los campos son requeridos para continuar.\n\r");
+            cprintf("Error: Algunos campos contienen caracteres invalidos.\nTodos los campos son requeridos para continuar.\n");
             textcolor(WHITE);
         }
 
@@ -817,18 +758,13 @@ void agregar_nueva_entrada(void)
     formulario.activo = true;
     if (save_new_entry(PELUDITOS_DB, &formulario))
     {
-        printf("\n");
-        textcolor(LIGHTGREEN);
-        cprintf("Entrada guardada con exito en la base de datos!\n\r");
+        printf("Entrada guardada con exito en la base de datos!\n");
     }
     else 
     {
-        printf("\n");
-        textcolor(LIGHTRED);
-        cprintf("Error al guardar la informacion del propietario.\n\r");
+        printf("Error al guardar la informacion del propietario.\n");
     }
-	textcolor(WHITE);
-	getch();
+	delay(1000);
 }
 
 void modificar_entrada(void)
@@ -837,14 +773,7 @@ void modificar_entrada(void)
     bool valid, valid2;
     char *p_DB, *q_BUFF; /* p_DB(puntero a Nombres en estructura), p_BUFF(puntero a cadena introducida por user) */
     char busqueda[50], opcion[16]; /* cadena que guarda el input del usuario */
-    if (!verify_loaded_DB())
-    {
-        textcolor(LIGHTRED);
-        cprintf("Error: La base de datos no ha sido cargada. Por favor, carguela primero.\n\r");
-        textcolor(WHITE);
-        getch();
-        return;
-    }
+    if (!end()) return;
 
     textcolor(YELLOW);
     cprintf("Ingrese el Nombre del propietario a modificar: ");
@@ -883,23 +812,8 @@ void modificar_entrada(void)
         clrscr();
         textcolor(LIGHTBLUE);
         cprintf("----- Entrada Encontrada -----\n\r");
-        textcolor(WHITE);
-        cprintf("Propietario: ");
-        textcolor(LIGHTCYAN);
-        cprintf ("%s\n\r", db_info[i].nombre_propietario);
-        textcolor(WHITE);
-        cprintf("ID: "); 
-        textcolor(LIGHTCYAN);
-        cprintf("%d\n\r", db_info[i].id);
-        textcolor(WHITE);
-        cprintf("Direccion: ");
-        textcolor(LIGHTCYAN);
-        cprintf("%s\n\r", db_info[i].direccion);
-        textcolor(WHITE);
-        cprintf("Telefono: ");
-        textcolor(LIGHTCYAN);
-        cprintf("%s\n\r", db_info[i].telefono);
-        textcolor(WHITE);
+        print_info(i);
+        printf("------------------------------\n\r");
         if (db_info[i].activo == false) 
         {
             cprintf("Estado: ");
@@ -940,103 +854,48 @@ void modificar_entrada(void)
                 do
                 {
                     limpiar_buffer();
-                    textcolor(YELLOW);
-                    cprintf("Ingrese nombre del propietario: ");
-                    textcolor(WHITE);
+                    printf("Ingrese nombre del propietario: ");
                     if(leer_linea_segura(db_info[i].nombre_propietario, MAX_OWNER_NAME) != 1){ mostrar_msj_err(); continue; }
-                    textcolor(YELLOW);
-                    cprintf("\n\rIngrese direccion del propietario: ");
-                    textcolor(WHITE);
+                    printf("\n\rIngrese direccion del propietario: ");
                     if(leer_linea_segura(db_info[i].direccion, MAX_ADRESS) != 1){ mostrar_msj_err(); continue; }
-                    textcolor(YELLOW);
-                    cprintf("\n\rIngrese telefono del propietario: ");
-                    textcolor(WHITE);
+                    printf("\n\rIngrese telefono del propietario: ");
                     if(leer_linea_segura(db_info[i].telefono, MAX_PHONE) != 1){ mostrar_msj_err(); continue; }
-                    textcolor(YELLOW);
-                    cprintf("\n\rIngrese el nombre de la mascota: ");
-                    textcolor(WHITE);
+                    printf("\n\rIngrese el nombre de la mascota: ");
                     if(leer_linea_segura(db_info[i].nombre_mascota, MAX_PET_NAME) != 1){ mostrar_msj_err(); continue; }
-                    textcolor(YELLOW);
-                    cprintf("\n\rIngrese la especie de la mascota: ");
-                    textcolor(WHITE);
+                    printf("\n\rIngrese la especie de la mascota: ");
                     if(leer_linea_segura(db_info[i].especie, MAX_PET_SPECIE) != 1){ mostrar_msj_err(); continue; }
                     
                     if (!verify_entry_iscorrect(&db_info[i]))
                     {
                         clrscr();
-                        textcolor(LIGHTRED);
-                        cprintf("Error: Algunos campos contienen caracteres invalidos.\n\rTodos los campos son requeridos para continuar.\n\r"); 
-                        cprintf("Por favor, intente de nuevo.\n\r");
-                        textcolor(WHITE);
+                        printf("Error: Algunos campos contienen caracteres invalidos.\nTodos los campos son requeridos para continuar.\n"); 
+                        printf("Por favor, intente de nuevo.\n");
                     }
                     else valid2 = true;
                 }while (!valid2);
-                if (save_db_info(PELUDITOS_DB))
-                {
-                    textcolor(LIGHTGREEN);
-                    cprintf("Registro actualizado con exito en la base de datos!\n\r");
-                    textcolor(WHITE);
-                }
-                else
-                {
-                    textcolor(LIGHTRED);
-                    cprintf("Error al modificar el registro de la base de datos.\n\r");
-                    textcolor(WHITE);
-                }
-                getch();
-                valid = true;
+                save_db_info(PELUDITOS_DB);
                 break;
             case 2:
                 if (db_info[i].activo == false)
                 {
-                    textcolor(LIGHTRED);
-                    cprintf("El registro ya esta INACTIVO. No se realizaron cambios.\n\r");
-                    textcolor(WHITE);
+                    printf("El registro ya esta INACTIVO. No se realizaron cambios.\n");
                     getch();
                     valid = true;
                     break;
                 }
                 db_info[i].activo = false;
-                if (save_db_info(PELUDITOS_DB))
-                {
-                    textcolor(LIGHTGREEN);
-                    cprintf("Registro eliminado de la base de datos!\n\r");
-                    textcolor(WHITE);
-                }
-                else
-                {
-                    textcolor(LIGHTRED);
-                    cprintf("Error al eliminar el registro de la base de datos.\n\r");
-                    textcolor(WHITE);
-                }
-                getch();
-                valid = true;
+                save_db_info(PELUDITOS_DB);
                 break;
             case 3:
                 if (db_info[i].activo == true)
                 {
-                textcolor(LIGHTRED);
-                    cprintf("El registro ya esta ACTIVO. No se realizaron cambios.\n\r");
-                    textcolor(WHITE);
-                    getch();
+                    printf("El registro ya esta ACTIVO. No se realizaron cambios.\n");
+                    delay(1000);
                     valid = true;
                     break;
                 }
                 db_info[i].activo = true;
-                if (save_db_info(PELUDITOS_DB))
-                {
-                    textcolor(LIGHTGREEN);
-                    cprintf("Exito al reactivar el estado del propietario en la base de datos!\n\r");
-                    textcolor(WHITE);
-                }
-                else
-                {
-                    textcolor(LIGHTRED);
-                    cprintf("Error al cambiar el estado del pripietario.\n\r");
-                    textcolor(WHITE);
-                    getch();
-                    valid = true;
-                }    
+                save_db_info(PELUDITOS_DB);
                 break;
             default:
                 valid = true;
@@ -1051,14 +910,7 @@ void modificar_entrada(void)
 void db_stats_active_owners(void)
 {
     size_t activos = 0, inactivos = 0;
-    if (!verify_loaded_DB())
-    {
-        textcolor(LIGHTRED);
-        cprintf("Error: La base de datos no ha sido cargada. Por favor, carguela primero.\n\r");
-        textcolor(WHITE);
-        getch();
-        return;
-    }
+    if (!end()) return;
 
     for (i = 0; i < count; i++)
     {
@@ -1076,8 +928,6 @@ void db_stats_active_owners(void)
         
     printf("   %c %26s%-19d%c\n",
         186, "Total entradas inactivas: ", (int)inactivos, 186);
-
-    getch();
 }
 
 void db_stats_species_count(void)
@@ -1086,12 +936,7 @@ void db_stats_species_count(void)
     size_t especie_count[14] = {0}; /* arreglo para contar especies */
     
 
-    if (!verify_loaded_DB())
-    {
-        printf("Error: La base de datos no ha sido cargada. Por favor, carguela primero.\n");
-        getch();
-        return;
-    }
+    if (!end())return;
 
     for (i = 0; i < count; i++)
     {
@@ -1147,7 +992,6 @@ void view_stats(void)
 
 void app_database(){
     char opcion[16];
-    if (kbhit()) getch();
     textcolor(YELLOW);
     cprintf("Bienvenido a base de datos de prueba\n\r");
     cprintf("Seleccione una opcion:\n\r");
@@ -1168,21 +1012,11 @@ void app_database(){
         printf("\n");
         switch (atoi(opcion))
         {
-        case 1:
-            agregar_nueva_entrada();
-            break;
-        case 2:
-            ver_db_info();
-            break;
-        case 3:
-            buscar_entrada();
-            break;
-        case 4:
-            modificar_entrada();
-            break;
-        case 5:
-            view_stats();
-            break;
+        case 1: agregar_nueva_entrada(); break;
+        case 2: ver_db_info(); break;
+        case 3: buscar_entrada(); break;
+        case 4: modificar_entrada(); break;
+        case 5: view_stats(); break;
         case 6:
             textcolor(LIGHTGREEN);
             cprintf("Saliendo del programa...\n\r");

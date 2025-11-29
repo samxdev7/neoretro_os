@@ -43,7 +43,7 @@ void limpiar_buffer(void); /* Limpieza del buffer */
 void funcion_error(void);   /* Control de errores */
 number_isvalid_t validar_entero (int*, int, int); /* validar una entrada de un int */
 number_isvalid_t validar_float (float*, float, float); /* validar una entrada de un float */
-buff_err_t buffer_isempty(const char*); /* Verifica si una cadena/string esta vacia o solo tiene espacios */
+buff_err_t buffer_isempty(char*); /* Verifica si una cadena/string esta vacia o solo tiene espacios */
 
 /*********************************
     INICIALIZACION DE FUNCIONES
@@ -144,7 +144,7 @@ BUF_ERR_NULL = -1 // s es NULL
 BUF_EMPTY = 1   // s está vacío o solo contiene espacios/tabuladores
 BUF_NOT_EMPTY = 0 // s contiene al menos un caracter no espacio
 */
-buff_err_t buffer_isempty(const char *s) {
+buff_err_t buffer_isempty(char *s) {
 
     /* primero verificamos que es puntero no sea NULL para evitar comportamiento indefinido */
     /* devuelve -1 si el valor es NULL */

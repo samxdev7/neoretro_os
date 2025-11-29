@@ -317,7 +317,7 @@ int cargar_fondo(void)
 {
     /* 1. Se carga la configuracion del fondo de pantalla aplicado
     a traves de fopen y FILE */
-    FILE *f = fopen("config.dat", "rb");
+    FILE *f = fopen("C:\\TC20\\Ficheros\\config.dat", "rb");
     int fondo = 1;    /* Se declara una variable por defecto del fondo */
 
     /* 2. Si el fichero no carga correctamente se devuelve el fondo por
@@ -338,7 +338,7 @@ int cargar_fondo(void)
 void guardar_fondo(int fondo)
 {
     /* 1. Se declara el apuntador a FILE para posteriormente crear (y truncar) el fichero */
-    FILE *f = fopen("config.dat", "wb");
+    FILE *f = fopen("C:\\TC20\\Ficheros\\config.dat", "wb");
     if (f == NULL) return;  /* Se valida para evitar conflictos */
     
     /* 2. Se escribe en el fichero el fondo actual para ser cargado cuando
@@ -396,7 +396,7 @@ void renderizar_fondo_de_pantalla(char *nombre_bin, short tipo)
 void guardar_protector(int protector)
 {
     /* 1. Se declara el apuntador a FILE para posteriormente crear (y truncar) el fichero */
-    FILE *f = fopen("protect.dat", "wb");
+    FILE *f = fopen("C:\\TC20\\Ficheros\\protect.dat", "wb");
     if (f == NULL) return;  /* Se valida para evitar conflictos */
     
     /* 2. Se escribe en el fichero el fondo actual para ser cargado cuando
@@ -415,7 +415,7 @@ int cargar_protector(void)
 {
     /* 1. Se carga el protector de pantalla seleccionado gracias
     a fopen */
-    FILE *f = fopen("protect.dat", "rb");
+    FILE *f = fopen("C:\\TC20\\Ficheros\\protect.dat", "rb");
     int protector = 1;    /* Se declara una variable por defecto del protector */
 
     /* 2. Si el fichero no carga correctamente se devuelve el protector por defecto */

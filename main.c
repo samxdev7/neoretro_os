@@ -1,4 +1,4 @@
-/* 
+/*
     ======================= NEORETRO OS ============================
 
     NeoRetro OS es un sistema operativo que ofrece aplicaciones

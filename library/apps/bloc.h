@@ -1,5 +1,12 @@
+#ifndef BLOC_NOTAS_H
+#define BLOC_NOTAS_H
 /*
 	BLOC_NOTAS_H
+    Esta libreria integra la aplicacion de bloc de notas en 
+    el sistema operativo. Su funcionalidad se basa en campos
+    de texto utilizado para la escritura de estos bloc, aunque
+    tambien integra funciones que permiten guardar y 
+    cargar el bloc de notas.
 
 	- Samuel Rueda
 */
@@ -77,7 +84,7 @@ short guardar_bloc(CampoTexto *bloc)
     char salto = '\n';  /* Variable que maneja del salto de linea '\n' */                 
 
     /* 2. Se crea el fichero */
-    archivo = fopen("bloc.bin", "wb");
+    archivo = fopen("C:\\TC20\\Ficheros\\bloc.bin", "wb");
     
     /* 3. A su vez este se valida */
     if (ferror(archivo)) { fclose(archivo); return EXIT_FAILURE; }
@@ -134,7 +141,7 @@ short cargar_bloc(CampoTexto *bloc)
     short pos_x_temp, pos_y_temp; /* Variables que guardan la posicion actual del bloc a cargar */
 
     /* 2. Se abre el fichero */
-    archivo = fopen("bloc.bin", "rb");
+    archivo = fopen("C:\\TC20\\Ficheros\\bloc.bin", "rb");
     
     /* 3. A su vez este se valida */
     if (ferror(archivo)) { fclose(archivo); return EXIT_FAILURE; }
@@ -320,5 +327,6 @@ void app_bloc_de_notas(void)
 	/* 10. Liberar memoria y destruir campo de texto */
     destruir_campo_texto(&editor);
     liberar_buffer_desplegable(&desplegable_buffer);
-	liberar_arreglo((void *) opciones_desplegables, n_opciones);
-}
+	liberar_arreglo((void **) opciones_desplegables, n_opciones);
+}
+#endif

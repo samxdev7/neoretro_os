@@ -15,7 +15,6 @@
     Importacion de Librerias Estandar
     =========================================
 */
-
 #include <graphics.h>
 #include <conio.h>
 
@@ -24,7 +23,6 @@
     Importacion de Librerias Personalizadas
     =========================================
 */
-
 #include "svga256.h" 	/* Libreria de constantes de resoluciones con 256 colores */
 #include "validgph.h"   /* Libreria validadora del modo grafico */
 
@@ -33,9 +31,26 @@
     Declaracion de Directivas
     =========================================
 */
-
-#define WIDTH 320 		/* Ancho fijo de la pantalla */
+#define WIDTH  320 		/* Ancho fijo de la pantalla */
 #define HEIGHT 200		/* Alto fijo de la pantalla */
+
+/*
+    =======================================
+    Definicion de Enums
+    =========================================
+*/
+/*
+    enum BootManageOS
+    Estructura enum encargada de categorizar las diferentes acciones de arranque 
+    simuladas del sistema operativo, utilizada en la carga inicial y
+    en el escritorio.
+*/
+typedef enum {
+    ACCION_NINGUNO,
+    ACCION_APAGAR,
+    ACCION_REINICIAR,
+    ACCION_SUSPENDER
+} BootManageOS;
 
 /*
     =======================================
@@ -96,10 +111,7 @@ short int iniciar_modo_svga_256(char *dir)
     - Funcion que cierra el modo grafico con getch + closegraph.
 */
 void getch_closegraph(void)
-{
-	getch();
-	closegraph();
-}
+{ getch(); closegraph(); }
 
 /* 
     colocar_configuraciones()
@@ -111,7 +123,6 @@ void colocar_configuraciones(void)
     /* Definir color y fuente de letra */
     setcolor(BLACK);
     settextstyle(SMALL_FONT, HORIZ_DIR, 4);
-    settextjustify(LEFT_TEXT, TOP_TEXT);
 }
 
 /* 
@@ -128,6 +139,5 @@ void set_bg(unsigned char color)
     setfillstyle(SOLID_FILL, color);
     bar(0, 0, WIDTH, HEIGHT);
 }
-
 #endif
 

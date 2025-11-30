@@ -1,0 +1,51 @@
+NeoRetro OS
+Creditos
+-----------Agradecimientos----------
+Agradecemos primeramente a Dios por guiarnos, 
+fortalecernos y permitirnos llegar hasta este 
+punto del proyecto. Extensivo tambien nuestro 
+agradecimiento a nuestras familias, cuyo apoyo 
+constante y motivacion fueron fundamentales 
+durante todo el proceso. Asimismo, expresamos 
+nuestro profundo agradecimiento a la 
+MSc. Gloria Quintana y al MSc. Grevin Silva, 
+quienes con su orientacion, dedicacion y 
+confianza nos inspiraron a crecer como 
+estudiantes, futuros profesionales y 
+como personas.
+
+-------------Universidad------------
+Universidad Nacional de Ingenieria
+---------------Carrera---------------
+Ingenieria en Computacion
+---------------Docente---------------
+MSc. Gloria Talia Quintana Flores
+--------------Creadores--------------
+ - Carlos Bayardo Valdivia Alaniz
+ - Carlos Humberto Torres M.
+ - Gabriela Abigail Ruiz Rodriguez
+ - Johanna Patricia Castellon Duarte
+ - Moises Eliseo Aleman Garcia
+ - Said Abel Garay B.
+ - Samuel Enrique Rueda Ruiz
+---------Periodo de desarrollo---------
+Inicio: Viernes, 17 de octubre de 2025
+Finalizacion: Martes, 25 de noviembre de 2025
+-------Herramientas utilizadas-------
+Desarrollo y compilacion
+- DOSBox+TC20
+- Visual Studio Code
+Utilidades y soporte
+- Python
+Colaboracion y control de versiones
+-Git + GitHub
+-Discord + Notion
+---------------------------------
+Muchisimas gracias a todos en nuestro 
+grupo 1M3 por sus consejos, su ayuda, 
+sus criticas y animos. Estamos muy 
+felices por el resultado de nuestro 
+trabajo y esperamos que nuestros 
+usuarios se sientan de la misma forma 
+con este mini OS.
+Att. Desarrolladores NeoRetro OS

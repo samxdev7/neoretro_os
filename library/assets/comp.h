@@ -277,7 +277,8 @@ void renderizar_componente(Component *componente)
 	con el componente de borde de ventana.
 	char *texto: Cadena de texto la cual contendra el componente.
 */
-void renderizar_componente_texto(Component *componente, char *texto) {
+void renderizar_componente_texto(Component *componente, char *texto) 
+{
     /* 1. Declaracion de variables */
 	short texto_x, texto_y;
     
@@ -309,7 +310,7 @@ void renderizar_componente_texto(Component *componente, char *texto) {
 
     - Parametros:
     Component *componente: Componente a renderizar con hover
-    void (*renderizar_especial)(Component*): Función de renderizado especial (opcional, debe pasarse
+    void (*renderizar_especial)(Component*): Funciï¿½n de renderizado especial (opcional, debe pasarse
     el puntero de la funcion)
 */
 void renderizar_componente_hover(Component *componente, void (*renderizar_especial)(Component*))
@@ -363,7 +364,7 @@ void manejar_hover_componente(
     HoverStatus hover_actual;   /* Corresponde con el hover actual */
     HoverStatus hover_anterior; /* Corresponde con el hover anterior */
 
-    /* 2. Verificar si el hover está disponible, sino, detiene la funcion */
+    /* 2. Verificar si el hover estï¿½ disponible, sino, detiene la funcion */
     if (componente -> hover.disponible != HOVER_DISPONIBLE) return;
     
     /* 3. Determinar estado actual del hover a traves de un operador ternario */
@@ -429,7 +430,7 @@ void manejar_hover_componente_texto(
     HoverStatus hover_anterior; /* Corresponde con el hover anterior */
     short texto_x, texto_y;     /* Posiciones del texto */
 
-    /* 2. Verificar si el hover está disponible, sino, detiene la funcion */
+    /* 2. Verificar si el hover estï¿½ disponible, sino, detiene la funcion */
     if (componente -> hover.disponible != HOVER_DISPONIBLE) return;
     
     /* 3. Determinar estado actual del hover a traves de un operador ternario */
@@ -622,5 +623,4 @@ void ajustar_texto_largo_componente(Component *componente, char *texto, short *t
     /* 17. Liberar memoria */
     free(texto_temporal);
 }
-
 #endif

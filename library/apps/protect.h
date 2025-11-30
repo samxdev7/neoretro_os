@@ -13,9 +13,9 @@
 
 	Libreria encargada de dibujar los tres protectores de pantalla
 	Para utilizarla solo se debes llamar:
-		-protector1();		Movimiento similar al del DVD con "NeoRetro OS"
-		-protector2();		Carrusel de imagenes de paisajes en Nicaragua
-		-protector3();   	Creacion de figuras geometricas en lugar aleatorios, con colores aleatorios  
+		-protector_1();		Movimiento similar al del DVD con "NeoRetro OS"
+		-protector_2();		Carrusel de imagenes de paisajes en Nicaragua
+		-protector_3();   	Creacion de figuras geometricas en lugar aleatorios, con colores aleatorios
 
     - Gabriela Ruiz
 */
@@ -636,4 +636,4 @@ void dibujar_elipse() {
     fillellipse(x, y, rx, ry);
     ellipse(x, y, 0, 360, rx, ry);
 }
-#endif
+#endif

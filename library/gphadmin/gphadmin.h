@@ -111,10 +111,7 @@ short int iniciar_modo_svga_256(char *dir)
     - Funcion que cierra el modo grafico con getch + closegraph.
 */
 void getch_closegraph(void)
-{
-	getch();
-	closegraph();
-}
+{ getch(); closegraph(); }
 
 /* 
     colocar_configuraciones()
@@ -126,7 +123,6 @@ void colocar_configuraciones(void)
     /* Definir color y fuente de letra */
     setcolor(BLACK);
     settextstyle(SMALL_FONT, HORIZ_DIR, 4);
-    settextjustify(LEFT_TEXT, TOP_TEXT);
 }
 
 /* 

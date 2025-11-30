@@ -26,8 +26,8 @@
     =========================================
 */
 void liberar_elemento(void *ptr);
-void liberar_arreglo(void **ptr, unsigned char n_elementos);
-void reservar_opciones_desplegables(char ***opciones_desplegables, unsigned char n_opciones);
+void liberar_arreglo(void **ptr, short n_elementos);
+void reservar_opciones_desplegables(char ***opciones_desplegables, short n_opciones);
 
 /*
     =======================================
@@ -53,12 +53,12 @@ void liberar_elemento(void *ptr)
 
     Parametros:
     void **ptr: Puntero a punteros del arreglo.
-    unsigned char n_elementos: Cantidad de elementos del arreglo.
+    short n_elementos: Cantidad de elementos del arreglo.
 */
-void liberar_arreglo(void **ptr, unsigned char n_elementos)
+void liberar_arreglo(void **ptr, short n_elementos)
 {
     /* 1. Definir ariable de indice */
-    unsigned short int i; 
+    unsigned short i; 
 
     /* 2. Validar si el puntero del arreglo no es nulo */
     if (ptr == NULL) return;
@@ -77,18 +77,18 @@ void liberar_arreglo(void **ptr, unsigned char n_elementos)
 }
 
 /* 
-	reservar_opciones-desplegables()
+	reservar_opciones_desplegables()
 	- Reserva cadenas utilizadas para appadmin.h y las aplicaciones del so (principalmente el 
     menu de despliegue).
 
     Parametros:
     char ***opciones_desplegables: Puntero a matriz de cadenas.
-    unsigned char n_opciones: Cantidad de opciones (elementos) del menu desplegable.
+    short n_opciones: Cantidad de opciones (elementos) del menu desplegable.
 */
-void reservar_opciones_desplegables(char ***opciones_desplegables, unsigned char n_opciones)
+void reservar_opciones_desplegables(char ***opciones_desplegables, short n_opciones)
 {
     /* 1. Declarar variable de indice */
-    unsigned char i;
+    unsigned short i;
 
     /* 2. Reservar a puntero char (**) (matriz de cadenas) */
     *opciones_desplegables = (char **) malloc(n_opciones * sizeof(char *));
@@ -99,5 +99,4 @@ void reservar_opciones_desplegables(char ***opciones_desplegables, unsigned char
         (*opciones_desplegables)[i] = (char *) malloc(20 * sizeof(char));
     }
 }
-
 #endif

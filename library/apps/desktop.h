@@ -5,6 +5,7 @@
     DESKTOP_H
     Libreria que administra el escritorio del sistema operativo.
 
+    - Gabriela Ruiz
 	- Samuel Rueda
 */
 
@@ -19,6 +20,7 @@
 #include <stdlib.h>
 #include <dos.h>
 #include <string.h>
+#include <time.h>
 
 /*
     =======================================
@@ -26,12 +28,19 @@
     =========================================
 */
 #include "gphadmin.h"   /* Libreria que administra el modo grafico y el sistema operativo */
+#include "dynamic.h"    /* Libreria que ofrece funciones para la memoria dinamica */
 #include "raster.h"     /* Libreria encargada de administrar la rasterizacion de ficheros */
 #include "comp.h"       /* Libreria de componentes para la interactividad del sistema operativo */
 #include "appadmin.h"   /* Libreria que administra las aplicaciones del sistema operativo */
-#include "dynamic.h"    /* Libreria que ofrece funciones para la memoria dinamica */
+#include "protect.h"    /* Libreria que administra los protectores de pantalla*/
 #include "timecont.h"   /* Libreria que administra el tiempo en base a cadenas y no estructuras */
+
+#include "boolso.h"     /* Libreria que simula el tipo de dato booleano */
 #include "config.h"     /* Aplicacion de configuraciones/ajustes del sistema operativo */
+#include "calc.h"       /* Aplicacion de calculadora */
+#include "bloc.h"       /* Aplicacion de bloc de notas */
+#include "filehnd.h"    /* Aplicacion de bases de datos de registro de mascotas */
+#include "paint.h"      /* Aplicacion de paint */
 
 /*
     =======================================
@@ -40,14 +49,14 @@
 */
 /* Cantidad de iconos */
 #define ICONOS_ESCRITORIO 5
-#define ICONOS_BARRA_TAREAS 4
+#define ICONOS_BARRA_TAREAS 3
 
 /* Coordenadas */
 #define INICIO_ICONOS_X_1      10
 #define INICIO_ICONOS_X_2      266
 #define INICIO_ICONOS_Y        5
 
-#define POS_X_BARRA_TAREAS     105
+#define POS_X_BARRA_TAREAS     112
 #define POS_Y_BARRA_TAREAS     (HEIGHT - 23)
 
 /* Tamanos */
@@ -84,7 +93,7 @@ static char *nombres_apps_escritorio[ICONOS_ESCRITORIO] = {
 
 /* Arreglo de cadenas de los ficheros de iconos de barra de tareas */
 static char *ficheros_iconos_barra_tareas[ICONOS_BARRA_TAREAS] = {
-    "SHUTVV.bin", "RESVV.bin", "SUSVV.bin", "CREDVV.bin"
+    "SHUTVV.bin", "RESVV.bin", "SUSVV.bin"
 };
 
 /*
@@ -113,18 +122,16 @@ typedef enum {
 
 /*
     Enum TaskBarIcons
-    Estructura enum que categoriza las acciones y/o creditos del sistema operativo, siendo
+    Estructura enum que categoriza iconos de acciones y/o creditos del sistema operativo, siendo
     en su mayoria acciones de arranque. Estas se categorizan en el siguiente orden:
     - Accion de apagar el sistema operativo.
     - Accion de reiniciar el sistema operativo.
     - Accion de suspender el sistema operativo.
-    - Mostrar los creditos del sistema operativo.
 */
 typedef enum {
     ICONO_APAGAR,
     ICONO_REINICIAR,
     ICONO_SUSPENDER,
-    ICONO_CREDITOS
 } TaskBarIcons;
 
 /*
@@ -134,13 +141,13 @@ typedef enum {
 */
 
 /* Seccion 1: Funciones de renderizado */
-void renderizar_fondo_de_pantalla(void);
+void aplicar_fondo(short fondo);
 void cargar_y_dibujar_icono(const char *nombre_archivo, short x, short y, short ancho, short alto);
 void renderizar_texto_icono(short icono_x, short icono_y, char *texto);
 void renderizar_escritorio(Component *barra_tareas);
 void mostrar_tiempo_escritorio(char *buffer_hora, char *buffer_fecha);
 
-/* Seccion 2: Funcion de escritorio */
+/* Seccion 2: Funcion de escritorio (principal) */
 BootManageOS escritorio_so(void);
 
 /*
@@ -148,23 +155,24 @@ BootManageOS escritorio_so(void);
     Inicializacion de Funciones
     =========================================
 */
-
-/* Seccion 1: Funciones de renderizado */
 /*
-    renderizar_fondo_de_pantalla();
-    Funcion que renderiza el fondo de pantalla seleccionado (aun no implementado).
-*/
-void renderizar_fondo_de_pantalla(void)
-{
-    /* 1. Se declara un buffer de fichero y se abre el fichero del fondo como lectura binaria */
-    FILE *fondo = fopen("dinosaur.bin", "rb");
-    if (fondo == NULL) return; /* Tambien se verifica si se abrio correctamente */
-    
-    /* 2. Se dibuja el fondo con rasterizado */
-    dibujar_con_rasterizado_pos(fondo, CENTER, 200, 200, WIDTH, HEIGHT);
+    aplicar_fondo(); 
+    Se encarga que abrir el archivo que fue seleccionado como fondo de pantalla y dibujarlo.
 
-    /* 3. Se cierra el fichero de fondo */
-    fclose(fondo);
+    Parametros:
+    - short fondo: Corresponde con el fondo de pantalla a aplicar (desde 1 hasta 5).
+*/
+void aplicar_fondo(short fondo) 
+{
+    /* A traves del switch se renderiza el fondo de pantalla */
+    switch (fondo) {
+        case 1:  renderizar_fondo_de_pantalla("C:\\TC20\\BIN\\dinosaur.bin", 1);  break; /* Vanilla/1: Dinosaurio de Google */
+        case 2:  renderizar_fondo_de_pantalla("C:\\TC20\\BIN\\city.bin", 2);      break; /* Morado/2:  Ciudad Morada */
+        case 3:  renderizar_fondo_de_pantalla("C:\\TC20\\BIN\\cherries.bin", 2);  break; /* Rojo/3:    Cerezas */
+        case 4:  renderizar_fondo_de_pantalla("C:\\TC20\\BIN\\cattus.bin", 2);    break; /* Verde/4:   Cactus + Gato */
+        case 5:  renderizar_fondo_de_pantalla("C:\\TC20\\BIN\\snorlax.bin", 2);   break; /* Azul/5:    Snorlax durmiendo */
+        default: renderizar_fondo_de_pantalla("C:\\TC20\\BIN\\dinosaur.bin", 1);  break; /* Defecto:   Vanilla/1 */
+    }
 }
 
 /* 
@@ -227,7 +235,7 @@ void renderizar_texto_icono(short icono_x, short icono_y, char *texto)
             icono_y + 37 + textheight(linea1_temp),
             linea2_temp
         );
-    } else { /* 4. Sino, se imprime a como esta */
+    } else { /* 4. Sino, se imprime como una linea */
         /* Se detecta la posicion final del texto */
         short texto_x = icono_x + 15 - (textwidth(texto) / 2);
 
@@ -291,15 +299,15 @@ void renderizar_escritorio(Component *barra_tareas)
     short icono;            /* Variable de indice de los iconos */
     short icono_x, icono_y; /* Variables de posicion de los iconos */
     
-    /* 2. Se dibuja el fondo de pantalla */
+    /* 2. Se carga y dibuja el fondo de pantalla */
     set_bg(WHITE);
-    renderizar_fondo_de_pantalla();
+    aplicar_fondo(cargar_fondo());
 
     /* 3. Se dibuja la barra de tareas */
     renderizar_componente(barra_tareas);
 
-    /* 4. Se colocan las configuraciones para texto */
-    colocar_configuraciones();
+    /* 4. Se configura el color de texto como negro */
+    setcolor(BLACK);
     
     /* 5. Renderizar iconos y textos de las apps en el escritorio */
     for (icono = 0; icono < ICONOS_ESCRITORIO; icono++) {
@@ -365,8 +373,7 @@ void mostrar_tiempo_escritorio(char *buffer_hora, char *buffer_fecha)
         setfillstyle(SOLID_FILL, COLOR_BARRA_TAREAS);
         bar(WIDTH - textwidth(buffer_fecha) - PADDING_TIEMPO,
             HEIGHT - textheight(buffer_hora) - 15,
-            WIDTH - PADDING_TIEMPO,
-            HEIGHT - PADDING_TIEMPO);
+            WIDTH - PADDING_TIEMPO, HEIGHT - PADDING_TIEMPO);
     }
     
     /* 3. En caso de que se haya cumplido o no la condicion anterior se muestra la hora y fecha */
@@ -388,6 +395,8 @@ void mostrar_tiempo_escritorio(char *buffer_hora, char *buffer_fecha)
     escritorio_so();
     - Funcion que administra el funcionamiento del escritorio.
     - Es la funcion principal de esta libreria.
+    - Trabaja a traves de un bucle y selecciones a traves
+    del raton para operar el escritorio.
 
     Devuelve:
     1/APAGAR si el usuario hizo click en apagar.
@@ -400,10 +409,12 @@ BootManageOS escritorio_so(void)
     /* Componentes del escritorio */
     Component barra_tareas, iconos_escritorio[ICONOS_ESCRITORIO], iconos_barra[ICONOS_BARRA_TAREAS];
 
+    /* Variables importantes */
     BootManageOS accion = ACCION_NINGUNO;                        /* Bandera de accion del sistema operativo */
-    short apagar_bandera = 0, i;                                 /* Bandera e indice */
     char hora_actual[FORMATO_HORA], fecha_actual[FORMATO_FECHA]; /* Formatos de hora */
+    short apagar_bandera = 0, i;                                 /* Bandera e indice */
     short mouse_x, mouse_y;                                      /* Posiciones del mouse */
+    time_t tiempo_inicio = time(NULL);                           /* Contador de tiempo para protector (se inicia el de inicio) */
 
     /* 2. Se inicializa las configuraciones de texto y del tiempo */
     colocar_configuraciones();
@@ -465,6 +476,7 @@ BootManageOS escritorio_so(void)
 
     /* 5. Renderizar escritorio completo */
 	renderizar_escritorio(&barra_tareas);
+    while (kbhit()) getch(); /* Se limpia el buffer */
     mver(); /* Se activa el mouse */
 
     /* 6. Bucle principal de operaciones */
@@ -484,29 +496,38 @@ BootManageOS escritorio_so(void)
             /* Se verifica si se hizo click en alguna de las aplicaciones del
             sistema operativo */
             for (i = 0; i < ICONOS_ESCRITORIO; i++) {
-                /* 3. Se detecta el click a alguno de los componentes */
                 if (mouse_sobre_componente(&iconos_escritorio[i], mouse_x, mouse_y))
                 {
                     mocultar(); /* Se oculta el mouse */
 
-                    /* 4. En ese caso selecciona a la app que se toco para ejecutarse */
+                    /* SELECCION / APLICACIONES DE SISTEMA OPERATIVO */
                     switch (i) {
-                        case SISTEMA:
+                        case SISTEMA: /* Caso: Sistema / Bases de Datos de Veterinaria */
+                            closegraph();                           /* Se cierra temporalmente el modo grafico */
+                            app_database();                         /* Se ejecuta la app de bases de datos */
+                            iniciar_modo_svga_256("C:\\TC20\\BIN"); /* Una vez ejecutada se vuelve a iniciar el modo grafico */
+                            colocar_configuraciones();              /* Se coloca la configuracionde texto original */
+                            break;    
+                        case CONFIGURACIONES: /* Caso: Configuraciones / Apps */
+                            app_configuraciones(); /* Se ejecuta la app de configuraciones */
+                            mocultar();            /* Se oculta el mouse para redibujar */
                             break;
-                        case CONFIGURACIONES:
-                            app_configuraciones();
+                        case CALCULADORA: /* Caso: Calculadora */
+                            app_calculadora();     /* Se ejecuta la app de la calculadora */
+                            mocultar();            /* Se oculta el mouse para redibujar */
+                            break;
+                        case BLOC_DE_NOTAS: /* Caso: Bloc de Notas */
+                            app_bloc_de_notas();   /* Se ejecuta la app del bloc de notas */
                             mocultar();
-                            renderizar_escritorio(&barra_tareas);
                             break;
-                        case CALCULADORA:
+                        case PAINT: /* Caso: Paint */
+                            paint();   /* Se ejecuta la app del paint */
+                            mocultar();
                             break;
-                        case BLOC_DE_NOTAS:
-                            break;
-                        case PAINT:
-                            break;
-                        }
-
-                    mver(); /* Se hailita el mouse */
+                    }
+                    renderizar_escritorio(&barra_tareas); /* Se redibuja el escritorio */
+                    mver();                               /* Se habilita el mouse */
+                    tiempo_inicio = time(NULL);           /* Se reinicia el contador para posteriormente activar el protector */
 
                     /* Una vez realizada las operaciones, se detiene el bucle */
                     break;
@@ -517,20 +538,26 @@ BootManageOS escritorio_so(void)
             for (i = 0; i < ICONOS_BARRA_TAREAS; i++) {
                 if (mouse_sobre_componente(&iconos_barra[i], mouse_x, mouse_y))
                 {
-                    /* 3. En ese caso se realiza las siguientes acciones dependiendo de la
-                    seleccionada */
+                    /* SELECCION / ACCIONES DE BARRA DE TAREAS */
                     switch (i) {
-                        case ICONO_APAGAR:
-                            apagar_bandera = 1;
-							accion = ACCION_APAGAR;
+                        case ICONO_APAGAR:                /* Caso: Apagado (Primer Icono) */
+                            apagar_bandera = 1;           /* Se activa la bandera para detener el escritorio */
+							accion = ACCION_APAGAR;       /* Se asigna la accion de apagar */
                             break;
-                        case ICONO_REINICIAR:
+                        case ICONO_REINICIAR:             /* Caso: Reinicio (Segundo Icono) */
+                            apagar_bandera = 1;           /* Se activa la bandera para detener el escritorio */
+							accion = ACCION_REINICIAR;    /* Se asigna la accion de reiniciar */
                             break;
-                        case ICONO_SUSPENDER:
-                            break;
-                        case ICONO_CREDITOS:
+                        case ICONO_SUSPENDER:             /* Caso: Suspender (Tercer Icono) */
+                            mocultar();                   /* Se oculta el raton */
+                            while (kbhit()) getch();      /* Se limpia el buffer */
+                            colocar_protector_pantalla(); /* Se activa el protector de pantalla guardado */
+                            apagar_bandera = 1;           /* Se activa la bandera para detener el escritorio */
+							accion = ACCION_SUSPENDER;    /* Se asigna la accion de suspender */
+                            mver();                       /* Se activa el raton */
                             break;
                     }
+                    tiempo_inicio = time(NULL);           /* Se reinicia el contador para posteriormente activar el protector */
 
                     /* Una vez realizada las operaciones, se detiene el bucle */
                     break;
@@ -538,10 +565,27 @@ BootManageOS escritorio_so(void)
             }
         }
 
-        delay(100); /* Para evitar saturacion del rendimiento se implementa un retraso */
+        /* === Seccion de Pantalla de Bloqueo === */
+        /* A traves de difftime se obtiene la diferencia entre el tiempo que inicio 
+        el escritorio hasta ahorita mismo, incrementando hasta que se llegue a los 15
+        segundos para activar el protector de pantalla (y suspender el sistema
+        operativo) */
+<<<<<<< HEAD
+        if (difftime(time(NULL), tiempo_inicio) == 15)  
+=======
+        if (difftime(time(NULL), tiempo_inicio) == 60)  
+>>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
+        {
+            mocultar();                   /* Se oculta el raton */
+            colocar_protector_pantalla(); /* Se activa el protector de pantalla guardado */
+            apagar_bandera = 1;           /* Se activa la bandera para detener el escritorio */
+            accion = ACCION_SUSPENDER;    /* Se asigna la accion de suspender */
+            mver();                       /* Se activa el raton */
+        }
+        delay(100);            /* Para evitar saturacion del rendimiento se implementa un retraso */
     } while (!apagar_bandera); /* Detectar cuando se detendra el escritorio */
 
-    mocultar();
-	return accion;
+    mocultar();     /* Se oculta el mouse */
+	return accion;  /* Y finalmente se retorna el tipo de accion tomada desde la barra de tareas */
 }
-#endif
+#endif

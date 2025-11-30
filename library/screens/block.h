@@ -486,7 +486,7 @@ BootManageOS pantalla_bloqueo_sesion(void)
     /* ==== FUNCIONAMIENTO PRINCIPAL DE PANTALLA DE BLOQUEO DE INICIO DE SESION ====*/
 	do {
         /* 7. Se captura las posiciones del mouse */
-		short mouse_x = mxpos(), mouse_y = mypos();
+        short mouse_x = mxpos(), mouse_y = mypos();
 
         /* ==== ANIMACIONES + HOVERS ====*/
         /* 8. Se utiliza el retardo manual para la animacion de degradado */
@@ -502,30 +502,32 @@ BootManageOS pantalla_bloqueo_sesion(void)
         /* ==== CALLBACKS ==== */
         /* 10. Detectar clicks en componentes */
         /* Caso: Componente iniciar sesion */
-        if (detectar_click_componente(&iniciar_sesion, mouse_x, mouse_y))
-        {
-			salir = 1;       		   /* Se activa la bandera de salida */
-			destino = INICIAR;         /* Se asigna a la variable de retorno */
+        if (mclick() == 1)
+        {    
+            if (mouse_sobre_componente(&iniciar_sesion, mouse_x, mouse_y))
+            {
+                salir = 1;       		   /* Se activa la bandera de salida */
+                destino = INICIAR;         /* Se asigna a la variable de retorno */
+            }
+            /* Caso: Componente apagar */
+            else if (mouse_sobre_componente(&apagar, mouse_x, mouse_y))
+            {
+                salir = 1;		           /* Se activa la bandera de salida */
+                destino = ACCION_APAGAR;   /* Se asigna a la variable de retorno */
+            }
+            /* Caso: Componente reiniciar */
+            else if (mouse_sobre_componente(&reiniciar, mouse_x, mouse_y))
+            {
+                salir = 1;       		    /* Se activa la bandera de salida */
+                destino = ACCION_REINICIAR; /* Se asigna a la variable de retorno */
+            }
+            /* Caso: Componente suspender */
+            else if (mouse_sobre_componente(&suspender, mouse_x, mouse_y))
+            {
+                salir = 1;                  /* Se activa la bandera de salida */
+                destino = ACCION_SUSPENDER; /* Se asigna a la variable de retorno */
+            }
         }
-        /* Caso: Componente apagar */
-        else if (detectar_click_componente(&apagar, mouse_x, mouse_y))
-        {
-			salir = 1;		           /* Se activa la bandera de salida */
-			destino = ACCION_APAGAR;   /* Se asigna a la variable de retorno */
-        }
-        /* Caso: Componente reiniciar */
-        else if (detectar_click_componente(&reiniciar, mouse_x, mouse_y))
-        {
-			salir = 1;       		    /* Se activa la bandera de salida */
-			destino = ACCION_REINICIAR; /* Se asigna a la variable de retorno */
-        }
-        /* Caso: Componente suspender */
-        else if (detectar_click_componente(&suspender, mouse_x, mouse_y))
-        {
-            salir = 1;                  /* Se activa la bandera de salida */
-			destino = ACCION_SUSPENDER; /* Se asigna a la variable de retorno */
-        }
-
         /* 11. Se incrementa el retardo manual */
         contador_retardo++;
 	} while (!salir); /* Se espera alguna respuesta de parte de los componentes */

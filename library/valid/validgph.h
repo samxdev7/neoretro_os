@@ -4,7 +4,7 @@
 /*
 	VALIDGPH_H
 	Libreria encargada de validar si se inicializo correctamente el
-    modo gráfico.
+    modo grï¿½fico.
 
     - Samuel Rueda
 */
@@ -56,7 +56,7 @@ int huge detectar_svga_256(void)
 
 /*
     verificar_instalacion_driver()
-    - Funcion que valida si el driver de video SVGA256 se instaló correctamente
+    - Funcion que valida si el driver de video SVGA256 se instalï¿½ correctamente
     - Si el driver no se pudo instalar (valor negativo), muestra un mensaje de error
     y retorna EXIT_FAILURE
     - OJO: Esta validacion es crucial antes de intentar inicializar el modo grafico

@@ -57,7 +57,7 @@ typedef enum {
     Declaracion de Prototipos
     =========================================
 */
-short iniciar_modo_svga_256(char *dir);
+short int iniciar_modo_svga_256(char *dir);
 void getch_closegraph(void);
 void colocar_configuraciones(void);
 void set_bg(unsigned char color);
@@ -76,7 +76,7 @@ void set_bg(unsigned char color);
     - char *dir: Cadena que indica el directorio donde esta guardado el driver
     svga256.bgi para usar el modo 320x200x256.
 */
-short iniciar_modo_svga_256(char *dir)
+short int iniciar_modo_svga_256(char *dir)
 {
 	/* Declaracion e instalacion de modo 320x200x256 */
 	int gd = DETECT, gm;

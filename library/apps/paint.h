@@ -19,17 +19,11 @@
 #include <stdlib.h>
 #include <dos.h>
 #include <string.h>
-<<<<<<< HEAD
 /*
     ========================================
     Importacion de Librerias Personalizadas
     =========================================
 */
-=======
-/*=========================================
-    Importacion de Librerias Personalizadas
-=========================================*/
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
 #include "comp.h"       /* Libreria de componentes, el corazon de las interfaces */
 #include "appadmin.h"   /* Libreria de gestor de aplicaciones */
 #include "dynamic.h"    /* Libreria de memoria dinamica */
@@ -37,19 +31,15 @@
 #include "raster.h"     /* Libreria de manejo de raster grafico */
 #include "boolso.h"     /* LIbreria de simulacion de booleanos */
 
-<<<<<<< HEAD
 /*
     ========================================
     Declaracion de directivas
     =========================================
 */
-=======
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
 /* Definicion de constantes */
 #define MAX_COLORS 24
 #define RGB 3
 
-<<<<<<< HEAD
 /*
     ========================================
     Declaracion de variables globales
@@ -71,45 +61,14 @@ unsigned short x1, y1, x2, y2; /* variables de coords para figura y funcion squa
 */
 /* Definicion de paleta de colores */
 typedef enum { /* Definicion de colores en la paleta */
-=======
-/*========================================
-    Declaracion de Funciones
-=========================================*/
-void marco_canvas(void);
-void guardar(void);
-void cargar(void);
-void rasterizar_bg(char filename[], short x1, short y1, short x2, short y2, char mode);
-bool verify_mo_state(void);
-void color_status(char color, char prev_color);
-void edge_current_color(void);
-void update_col(unsigned char nuevo_color);
-void fill_area_size(void);
-void bucket_callback(void);
-void eraser_callback(void);
-void square_callback(void);
-void lazo_callback(void);
-void callback_eyedropper(void);
-void draw_icon(void);
-void manejar_opcion_menu(int opcion_seleccionada);
-void paint(void);
-
-/* Definicion de paleta de colores */
-typedef enum {
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
     COL1 = 0, COL2 = 92, COL3 = 43, COL4 = 6, COL5 = 186,
     COL6 = 205, COL7 = 17, COL8 = 67, COL9 = 42, COL10 = 39,
     COL11 = 111, COL12 = 180, COL13 = 178, COL14 = 92, COL15 = 70,
     COL16 = 72, COL17 = 2, COL18 = 124, COL19 = 197, COL20 = 77,
     COL21 = 52, COL22 = 53, COL23 = 126, COL24 = 127
-<<<<<<< HEAD
 } Paleta_colores_t;
 
 const unsigned char paleta_colores[MAX_COLORS] = { /* Array de colores en la paleta */
-=======
-}Paleta_colores_t;
-
-const unsigned char paleta_colores[MAX_COLORS] = {
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
     COL1, COL2, COL3, COL4, COL5, COL6,
     COL7, COL8, COL9, COL10, COL11, COL12,
     COL13, COL14, COL15, COL16, COL17, COL18,
@@ -117,16 +76,11 @@ const unsigned char paleta_colores[MAX_COLORS] = {
 };
 
 /* Definicion de coordenadas Y para filas de colores */
-<<<<<<< HEAD
 enum Col_row_y_coords { /* Definicion de coordenadas Y para filas de colores */
-=======
-enum Col_row_y_coords {
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
     Y1_ROW1 = 166, Y2_ROW1 = 176, 
     Y1_ROW2 = 178, Y2_ROW2 = 188
 };
 
-<<<<<<< HEAD
 /*========================================
     Declaracion de Funciones
 =========================================*/
@@ -152,23 +106,6 @@ void paint(void); /* Función principal de la aplicación de dibujo */
     Inicializacion de Funciones
 =========================================*/
 void marco_canvas() { /* Dibuja el marco del canvas de dibujo */
-=======
-/* variables globales */
-bool redibujar = true, draw_canvas = true, mouse_visible = false;
-bool bucket_is_active = false, eraser_is_active = false;
-bool sqr_is_active = false, brush_is_active = true;
-bool lazo_is_active = false, eyedropper_is_active = false; 
-short mouse_x, mouse_y;
-unsigned char size_brush = 1, brush_color = BLACK, current_color = BLACK, prev_color = BLACK, clic;
-unsigned char fig_clck_count = 0;
-unsigned short x1, y1, x2, y2; /* variables de coords para figura y funcion square_callback */
-
-
-/*========================================
-    Declaracion de Funciones
-=========================================*/
-void marco_canvas() {
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
     setfillstyle(SOLID_FILL, BLACK);
     bar(46, 21, 316, 161);
 }
@@ -178,7 +115,6 @@ void guardar() {
     int i, j;
     unsigned char pixel_color;
     
-<<<<<<< HEAD
     p = fopen("C:\\TC20\\Ficheros\\paint_drawing.bin", "wb"); /* Abre el archivo para guardar el dibujo */
     if (!p) 
     { printf("Error al abrir el archivo para guardar.\n"); return; }
@@ -190,19 +126,6 @@ void guardar() {
         }
     }
     fclose(p); /* Cierra el archivo */
-=======
-    p = fopen("C:\\TC20\\Ficheros\\paint_drawing.bin", "wb");
-    if (!p) 
-    { printf("Error al abrir el archivo para guardar.\n"); return; }
-
-    for (i = 22; i < 161; i++) {
-        for (j = 47; j < 316; j++) {
-            pixel_color = getpixel(j, i);
-            fwrite(&pixel_color, sizeof(unsigned char), 1, p);
-        }
-    }
-    fclose(p);
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
 }
 
 void cargar() {
@@ -210,7 +133,6 @@ void cargar() {
     int i, j;
     unsigned char pixel_color;
 
-<<<<<<< HEAD
     p = fopen("C:\\TC20\\Ficheros\\paint_drawing.bin", "rb"); /* Abre el archivo para cargar el dibujo */
     if (!p) 
     { printf("Error al abrir el archivo para cargar.\n"); return; }
@@ -239,46 +161,11 @@ bool verify_mo_state() { /* Verifica el estado del mouse y lo oculta si es neces
     if (clic == 1 && mouse_visible) {
         mocultar();
         return true; /* El mouse estaba visible y se oculto */
-=======
-    p = fopen("C:\\TC20\\Ficheros\\paint_drawing.bin", "rb");
-    if (!p) 
-    { printf("Error al abrir el archivo para cargar.\n"); return; }
-
-    for (i = 22; i < 161; i++) {
-        for (j = 47; j < 316; j++) {
-            fread(&pixel_color, sizeof(unsigned char), 1, p);
-            putpixel(j, i, pixel_color);
-        }
-    }
-    fclose(p);
-}
-
-void rasterizar_bg(char filename[], short x1, short y1, short x2, short y2, char mode) {
-    FILE *p;
-	p = fopen(filename, "rb");
-    if (validar_archivo(p)) return;
-    if (mode == 'r')
-        dibujar_raster_png_coords(p, x1, y1, x2, y2); /* Dibuja el fondo de la calculadora */
-    else if (mode == 'c')
-        dibujar_con_rasterizado_coords(p, x1, y1, x2, y2); /* Dibuja el fondo de la calculadora */
-    fclose(p);
-}
-
-bool verify_mo_state() {
-    if (clic == 1 && mouse_visible) {
-        mocultar();
-        return true;
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
     }
     return false;
 }
 
-<<<<<<< HEAD
 void color_status(char color, char prev_color) { /* Actualiza el estado de los colores en la interfaz */
-=======
-void color_status(char color, char prev_color)
-{
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
     /* fondo */
     setfillstyle(SOLID_FILL, 28);
     bar(3, 166, 25, 188);
@@ -308,15 +195,9 @@ void color_status(char color, char prev_color)
     line(7, 179, 17, 179);
 }
 
-<<<<<<< HEAD
 void edge_current_color() {setcolor(prev_color); rectangle(47, 22, 315, 160);} /* Dibuja un borde alrededor del canvas con el color actual */
 
 void update_col(unsigned char nuevo_color) /* Actualiza el color actual */
-=======
-void edge_current_color() {setcolor(prev_color); rectangle(47, 22, 315, 160);}
-
-void update_col(unsigned char nuevo_color)
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
 {
     if (nuevo_color == brush_color) {
         return;
@@ -329,7 +210,6 @@ void update_col(unsigned char nuevo_color)
 /*=======================================
     Callbacks
 =========================================*/
-<<<<<<< HEAD
 void fill_area_size() { /* Ajusta el tamaño del área de relleno */
 
     if (bucket_is_active) /* Si la herramienta cubeta está activa */
@@ -342,20 +222,6 @@ void fill_area_size() { /* Ajusta el tamaño del área de relleno */
             mouse_visible = false;
 
     switch(size_brush) { /* Selecciona el tamaño del pincel */
-=======
-void fill_area_size() {
-
-    if (bucket_is_active)
-        return;
-
-    setcolor(brush_color);
-    setfillstyle(SOLID_FILL, brush_color);
-
-		if(verify_mo_state())
-            mouse_visible = false;
-
-    switch(size_brush) {
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
         case 10:
 
             if(minlimit(49, 24, 313, 158))
@@ -376,30 +242,20 @@ void fill_area_size() {
     }
 }
 
-<<<<<<< HEAD
  void bucket_callback() { /* Callback para la herramienta cubeta */
-=======
- void bucket_callback() {
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
     if (!bucket_is_active)
         return;
 
     if (minlimit(50, 25, 312, 157) && mclick_M() == 1)
     {
         mocultar();
-<<<<<<< HEAD
         setfillstyle(SOLID_FILL, brush_color); /* Establece el estilo de relleno */
         floodfill(mouse_x, mouse_y, prev_color); /* Rellena el área con el color del pincel */
-=======
-        setfillstyle(SOLID_FILL, brush_color);
-        floodfill(mouse_x, mouse_y, prev_color);
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
         mouse_visible = false;
     }
 }
 
 
-<<<<<<< HEAD
 void eraser_callback() {  /* Callback para la herramienta borrador */
 
     setfillstyle(SOLID_FILL, WHITE); /* Establece el estilo de relleno blanco */
@@ -408,16 +264,6 @@ void eraser_callback() {  /* Callback para la herramienta borrador */
             mouse_visible = false;
 
     switch(size_brush) { /* Selecciona el tamaño del pincel */
-=======
-void eraser_callback() {
-
-    setfillstyle(SOLID_FILL, WHITE);
-
-		if(verify_mo_state())
-            mouse_visible = false;
-
-    switch(size_brush) {
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
         case 10:
 
             if(minlimit(49, 24, 313, 158))
@@ -440,7 +286,6 @@ void eraser_callback() {
     }
 }
 
-<<<<<<< HEAD
 void square_callback() { /* Callback para la herramienta cuadrado */
 
     do{
@@ -489,61 +334,10 @@ void lazo_callback() { /* Callback para la herramienta lazo */
             delay(50);
         }
     }while (lazo_is_active && clic_m != 2); /* Continúa hasta que se suelte el clic del mouse */
-=======
-void square_callback() {
-
-    do{
-        clic = mclick();
-        x2 = mxpos();
-        y2 = mypos();
-        if (fig_clck_count <= 1)
-        {
-            fig_clck_count++;
-            x1 = mouse_x;
-            y1 = mouse_y;
-            mocultar();
-            putpixel(x1, y1, brush_color);
-            mver();
-        }
-        else if (!minlimit(48, 23, 314, 159)) break;
-
-    }while (clic == 1);
-    fig_clck_count = 0;
-    setcolor(brush_color);
-    mocultar();
-    rectangle(x1, y1, x2, y2);
-    mver();
-}
-
-void lazo_callback() {
-    unsigned short coords[32]; /* almacenar hasta 16 puntos (x,y) */
-    unsigned char point_count = 0; /* contador de puntos almacenados */
-    unsigned short *p;
-    unsigned short mouse_x, mouse_y, clic_m;
-
-    do{
-        clic_m = mclick();
-        mouse_x = mxpos();
-        mouse_y = mypos();
-
-        if (minlimit(48, 23, 314, 159) && point_count < 15 && clic_m == 1){
-            
-            mocultar();
-            setcolor(brush_color);
-            putpixel(mouse_x, mouse_y, brush_color);
-            coords[point_count * 2] = mouse_x;       /* almacenar x */
-            coords[point_count * 2 + 1] = mouse_y;   /* almacenar y */
-            point_count++;
-            mver();
-            delay(50);
-        }
-    }while (lazo_is_active && clic_m != 2);
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
 
     if (point_count < 2)
         return; /* no hay suficientes puntos para dibujar un lazo */
 
-<<<<<<< HEAD
     coords[point_count * 2] = coords[0];      /* cerrar el lazo */
     coords[point_count * 2 + 1] = coords[1];   /* cerrar el lazo */
     point_count++; /* incrementar para el punto de cierre */
@@ -576,40 +370,6 @@ void callback_eyedropper() { /* Callback para la herramienta cuentagotas */
 		update_col(picked_color); /* Actualiza el color seleccionado */
         mouse_visible = false; /* Indica que el mouse no está visible */
         eyedropper_is_active = false; /* Desactiva la herramienta cuentagotas */
-=======
-    coords[point_count * 2] = coords[0];
-    coords[point_count * 2 + 1] = coords[1];   /* cerrar el lazo */
-    point_count++;
-
-    p = malloc(point_count * 2 * sizeof(unsigned short));
-    if (!p) {
-        printf("Error al asignar memoria para lazo...\n\r");
-        free(p);
-        return;
-    }
-    memcpy(p, coords, point_count * 2 * sizeof(unsigned short));
-    setcolor(brush_color);
-    mocultar();
-    drawpoly(point_count, (int*)p);
-    mver();
-    free(p);
-    lazo_is_active = false;
-    return;
-}
-
-void callback_eyedropper() {
-    unsigned char picked_color;
-    if (!eyedropper_is_active)
-        return;
-
-    if (minlimit(47, 22, 315, 160) && mclick_M() == 1)
-    {
-        mocultar();
-        picked_color = getpixel(mouse_x, mouse_y);
-		update_col(picked_color);
-        mouse_visible = false;
-        eyedropper_is_active = false;
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
     }
 }
 
@@ -617,21 +377,13 @@ void draw_icon()
 {
     setcolor(BLACK);
     rectangle(28, 112, 37, 120); /* sqr */
-<<<<<<< HEAD
     line(13, 119, 15, 117); /* lazo icon draw */
-=======
-    line(13, 119, 15, 117); /* lazo handle */
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
     line(15, 117, 11, 111); 
     line(11, 111, 13, 109);
     line(13, 109, 17, 116);
 }
 
-<<<<<<< HEAD
 void manejar_opcion_menu_paint(int opcion_seleccionada)
-=======
-void manejar_opcion_menu(int opcion_seleccionada)
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
 {
     switch (opcion_seleccionada) {
         case 0:  /* Primera opcion */
@@ -706,26 +458,15 @@ void paint(void) {
 
     /* Inicializar componente y hover mensaje */
 
-<<<<<<< HEAD
     for (i = 0; i < 12; i++) { /* se definen la paleta de colores, mas no se renderiza */
-=======
-    for (i = 0; i < 12; i++) {
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
         constructor_componente(&col[i], xcoords[i][0], Y1_ROW1, xcoords[i][1], Y2_ROW1, paleta_colores[i], BLACK, BLACK, HOVER_NO_DISPONIBLE);
 
         constructor_componente(&col[i + 12], xcoords[i][0], Y1_ROW2, xcoords[i][1], Y2_ROW2, paleta_colores[i + 12], BLACK, BLACK, HOVER_NO_DISPONIBLE);
     }
-<<<<<<< HEAD
     for (i = 0; i < 3; i++) /* tamaños de pincel */
         constructor_componente(&size[i], size_coords[i][0], size_coords[i][1], size_coords[i][2], size_coords[i][3], WHITE, WHITE, WHITE, HOVER_NO_DISPONIBLE);
 
     for (i = 0; i < 7; i++) /* herramientas */
-=======
-    for (i = 0; i < 3; i++)
-        constructor_componente(&size[i], size_coords[i][0], size_coords[i][1], size_coords[i][2], size_coords[i][3], WHITE, WHITE, WHITE, HOVER_NO_DISPONIBLE);
-
-    for (i = 0; i < 7; i++)
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
         constructor_componente(&tools[i], tools_coords[i][0], tools_coords[i][1], tools_coords[i][2], tools_coords[i][3], LIGHTGRAY, BLACK, BLACK, HOVER_NO_DISPONIBLE);
 
     constructor_componente(&canvas, 47, 22, 315, 160, WHITE, WHITE, BLACK, HOVER_NO_DISPONIBLE);
@@ -763,7 +504,6 @@ void paint(void) {
         mouse_x = mxpos(); mouse_y = mypos(); clic = mclick();
         
         /* ===== HOVERS ===== */
-<<<<<<< HEAD
         manejar_hover_componente(&cerrar, mouse_x, mouse_y, renderizar_boton_cerrar); /* Maneja el hover del botón cerrar */
         manejar_hover_componente(&despliegue, mouse_x, mouse_y, renderizar_boton_despliegue); /* Maneja el hover del botón desplegable */
 
@@ -778,22 +518,6 @@ void paint(void) {
         /* Procesar resultados */
         if (resultado == n_opciones) salir = 1;
         else if (resultado >= 0) manejar_opcion_menu_paint(resultado);
-=======
-        manejar_hover_componente(&cerrar, mouse_x, mouse_y, renderizar_boton_cerrar);
-        manejar_hover_componente(&despliegue, mouse_x, mouse_y, renderizar_boton_despliegue);
-
-        /* ===== CALLBACKS ===== */
-        /* Manejo completo de la barra de ventana */        
-        resultado = manejar_barra_ventana(
-            &cerrar, &despliegue, mouse_x, mouse_y,
-            &despliegue_activo, n_opciones, 
-            opciones_desplegables, &desplegable_buffer
-        );
-
-        /* Procesar resultados */
-        if (resultado == n_opciones) salir = 1;
-        else if (resultado >= 0) manejar_opcion_menu(resultado);
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
 
         if (draw_canvas) {
             mocultar(); renderizar_componente(&canvas);
@@ -802,11 +526,7 @@ void paint(void) {
         /* ===== DETECCION DE EVENTOS ===== */
         if (clic == 1)
         {
-<<<<<<< HEAD
             for (i = 0; i < 24; i++) /* paleta de colores */
-=======
-            for (i = 0; i < 24; i++)
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
             {
                 if (mouse_sobre_componente(&col[i], mouse_x, mouse_y)) 
                 {
@@ -814,11 +534,7 @@ void paint(void) {
                     break;
                 }
             }
-<<<<<<< HEAD
             for (i = 0; i < 7; i++) /* herramientas */
-=======
-            for (i = 0; i < 7; i++)
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
             {
                 if (mouse_sobre_componente(&tools[i], mouse_x, mouse_y)) 
                 {
@@ -856,11 +572,7 @@ void paint(void) {
                    break;
                 }
             }
-<<<<<<< HEAD
             for (i = 0; i < 3; i++) /* tamaños de pincel */
-=======
-            for (i = 0; i < 3; i++)
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
             {
                 if (mouse_sobre_componente(&size[i], mouse_x, mouse_y) && clic == 1) {
                     switch (i) {
@@ -897,7 +609,6 @@ void paint(void) {
             }
         }
 
-<<<<<<< HEAD
         if (eyedropper_is_active && mouse_sobre_componente(&canvas, mouse_x, mouse_y) && clic == 1) callback_eyedropper(); /* Herramienta cuentagotas */
         if (sqr_is_active && mouse_sobre_componente(&canvas, mouse_x, mouse_y) && clic == 1) square_callback(); /* Herramienta cuadrado */
         if (bucket_is_active) bucket_callback(); /* Herramienta cubo */
@@ -908,23 +619,6 @@ void paint(void) {
 	} while (!salir); /* Finalizar aplicacion */
 
 	/* Liberar memoria */
-=======
-        if (eyedropper_is_active && mouse_sobre_componente(&canvas, mouse_x, mouse_y) && clic == 1) callback_eyedropper();
-
-        if (sqr_is_active && mouse_sobre_componente(&canvas, mouse_x, mouse_y) && clic == 1) square_callback();
-
-        if (bucket_is_active) bucket_callback();
-
-        if (eraser_is_active && clic == 1) eraser_callback();
-
-        if (lazo_is_active && mouse_sobre_componente(&canvas, mouse_x, mouse_y)) lazo_callback();
-
-		if (mouse_sobre_componente(&canvas, mouse_x, mouse_y) && clic == 1 && !eraser_is_active) fill_area_size();
-
-	}while (!salir);
-
-	/* 17. Liberar memoria (NO TOCAR) */
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
     liberar_buffer_desplegable(&desplegable_buffer);
     liberar_arreglo((void*)opciones_desplegables, n_opciones);
 }

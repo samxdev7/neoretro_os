@@ -570,11 +570,7 @@ BootManageOS escritorio_so(void)
         el escritorio hasta ahorita mismo, incrementando hasta que se llegue a los 15
         segundos para activar el protector de pantalla (y suspender el sistema
         operativo) */
-<<<<<<< HEAD
         if (difftime(time(NULL), tiempo_inicio) == 15)  
-=======
-        if (difftime(time(NULL), tiempo_inicio) == 60)  
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4
         {
             mocultar();                   /* Se oculta el raton */
             colocar_protector_pantalla(); /* Se activa el protector de pantalla guardado */

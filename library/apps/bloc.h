@@ -327,12 +327,6 @@ void app_bloc_de_notas(void)
 	/* 10. Liberar memoria y destruir campo de texto */
     destruir_campo_texto(&editor);
     liberar_buffer_desplegable(&desplegable_buffer);
-<<<<<<< HEAD
 	liberar_arreglo((void **) opciones_desplegables, n_opciones);
 }
 #endif
-=======
-	liberar_arreglo((void *) opciones_desplegables, n_opciones);
-}
-#endif
->>>>>>> 3118c7333c33e2702d8f10b39c40ccabff258da4

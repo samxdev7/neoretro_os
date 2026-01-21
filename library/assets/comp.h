@@ -27,7 +27,6 @@
     Importacion de Librerias Estandar
     =========================================
 */
-
 #include <stdio.h>
 #include <conio.h>
 #include <graphics.h>
@@ -95,7 +94,6 @@ typedef struct
     Definicion de Enum
     =========================================
 */
-
 /* 
     Enum HoverAvailable
     - Estructura enum para evaluar la disponiblidad del hover.

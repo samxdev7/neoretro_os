@@ -1,4 +1,4 @@
-/* GFHAdmin - Handle Graphic Settings */
+/* GPHAdmin - Handle Graphic Settings */
 #ifndef GPHADMIN_H
 #define GPHADMIN_H
 
@@ -37,7 +37,7 @@ void set_bg(unsigned char color);
 short iniciar_modo_svga_256(char *dir)
 {
 	int gd = DETECT, gm;
-	int driver = installuserdriver("Svga256", detectar_svga_256);
+	installuserdriver("Svga256", detectar_svga_256);
     initgraph(&gd, &gm, dir);
 	cleardevice(); 		 
 	return EXIT_SUCCESS;

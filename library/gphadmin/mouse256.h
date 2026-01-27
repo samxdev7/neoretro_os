@@ -6,50 +6,43 @@
 
 union REGS reg;
 
-int mtest(void)
-{
+int mtest(void) {
     reg.x.ax = 0x0;
     int86(0x33, &reg, &reg);
     if (reg.x.ax > 0) return reg.x.bx;
     else return 0;
 }
 
-void mshow(void)
-{
+void mshow(void) {
     reg.x.ax = 0x1;
     int86(0x33, &reg, &reg);
 }
 
-void mhide(void)
-{
+void mhide(void) {
     reg.x.ax = 0x2;
     int86(0x33, &reg, &reg);
 }
 
-int mxpos(void)
-{
+int mxpos(void) {
     reg.x.ax = 0x3;
     int86(0x33, &reg, &reg);
     return reg.x.cx / 2;  
 }
 
-int mypos(void)
-{
+int mypos(void) {
     reg.x.ax = 0x3;
     int86(0x33, &reg, &reg);
     return reg.x.dx;
 }
 
-void mplace(int x, int y)
-{
+void mplace(int x, int y) {
     reg.x.ax = 0x4;
     reg.x.cx = x * 2;           
     reg.x.dx = y;    
     int86(0x33, &reg, &reg);
 }
 
-int mclick(void)
-{
+int mclick(void) {
 	int r = 0;
 	reg.x.ax = 0x5;
 	reg.x.bx = 0;
@@ -83,8 +76,7 @@ int mclick_p(void) {
     return r;
 }
 
-void mlimit(int x1, int y1, int x2, int y2)
-{
+void mlimit(int x1, int y1, int x2, int y2) {
     reg.x.ax = 0x7;
     reg.x.cx = x1 * 2;         
     reg.x.dx = x2 * 2;

@@ -24,8 +24,7 @@ short start_svga_256_mode(char *dir);
 void set_text_config_so(unsigned char color);
 void set_bg(unsigned char color);
 
-short start_svga_256_mode(char *dir)
-{
+short start_svga_256_mode(char *dir) {
 	int gd = DETECT, gm;
 	installuserdriver("Svga256", detect_svga_256);
     initgraph(&gd, &gm, dir);
@@ -33,8 +32,7 @@ short start_svga_256_mode(char *dir)
 	return EXIT_SUCCESS;
 }
 
-void set_text_config_so(unsigned char color)
-{
+void set_text_config_so(unsigned char color) {
     setcolor(color);
     settextstyle(SMALL_FONT, HORIZ_DIR, 4);
 }
@@ -43,8 +41,7 @@ void set_text_config_so(unsigned char color)
  * It is used this function by fixing setbkcolor main problem.
  * This consists of not giving black color correctly with that function.
  */
-void set_bg(unsigned char color)
-{
+void set_bg(unsigned char color) {
     setfillstyle(SOLID_FILL, color);
     bar(0, 0, WIDTH, HEIGHT);
 }

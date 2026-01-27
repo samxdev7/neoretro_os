@@ -14,8 +14,7 @@ extern int far _Cdecl Svga256_fdriver[];
 
 /* Detect SVGA 256 Mode */
 int huge detect_svga_256(void);
-int huge detect_svga_256(void)
-{
+int huge detect_svga_256(void) {
     return SVGA320x200x256; /* Case SVGA 320x200x256 */
 }
 #endif /* __SVGA256_H__ */

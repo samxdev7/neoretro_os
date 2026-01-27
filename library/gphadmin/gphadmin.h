@@ -2,68 +2,50 @@
 #ifndef GPHADMIN_H
 #define GPHADMIN_H
 
-
 #include <graphics.h>
 #include <conio.h>
-
-
-#include "svga256.h"
-
+#include <svga256.h>
 
 #define WIDTH  320		
 #define HEIGHT 200
 
-
 /*
-    enum BootManageOS
-    Estructura enum encargada de categorizar las diferentes acciones de arranque 
-    simuladas del sistema operativo, utilizada en la carga inicial y
-    en el escritorio.
-*/
+ * This enum structure is used for categorize basic booting actions for SO
+ * (well, are simulated), used mainly at initial loading and desktop.
+ */
 typedef enum {
-    ACCION_NINGUNO,
-    ACCION_APAGAR,
-    ACCION_REINICIAR,
-    ACCION_SUSPENDER
+    NONE_ACTION,
+    SHUT_DOWN_ACTION,
+    RESTART_ACTION,
+    SUSPEND_ACTION
 } BootManageOS;
 
-
-short iniciar_modo_svga_256(char *dir);
-void getch_closegraph(void);
-void colocar_configuraciones(void);
+short start_svga_256_mode(char *dir);
+void set_text_config_so(unsigned char color);
 void set_bg(unsigned char color);
 
-
-short iniciar_modo_svga_256(char *dir)
+short start_svga_256_mode(char *dir)
 {
 	int gd = DETECT, gm;
-	installuserdriver("Svga256", detectar_svga_256);
+	installuserdriver("Svga256", detect_svga_256);
     initgraph(&gd, &gm, dir);
 	cleardevice(); 		 
 	return EXIT_SUCCESS;
 }
 
-/*
-    colocar_configuraciones()
-    Esta funcion coloca las configuraciones del color de texto y el estilo de texto
-    actual para ser utilizado por las funciones de graphics.h.
-*/
-void colocar_configuraciones(void)
+void set_text_config_so(unsigned char color)
 {
-    setcolor(BLACK);
+    setcolor(color);
     settextstyle(SMALL_FONT, HORIZ_DIR, 4);
 }
 
 /* 
-    set_bg()
-    - Funcion que cambia el color de fondo de la pantalla, resolviendo la
-    problematica de setbkcolor de graphics.h.
-*/
+ * It is used this function by fixing setbkcolor main problem.
+ * This consists of not giving black color correctly with that function.
+ */
 void set_bg(unsigned char color)
 {
-    /* Definir color y fuente de letra */
     setfillstyle(SOLID_FILL, color);
     bar(0, 0, WIDTH, HEIGHT);
 }
-#endif
-
+#endif /* GPHAdmin.h */

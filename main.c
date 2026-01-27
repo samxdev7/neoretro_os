@@ -15,28 +15,27 @@
 #include "block.h"      
 #include "protect.h"
 
-int main()
-{
-    BootManageOS estado_os = ACCION_REINICIAR; /* SO Status */
+int main() {
+    BootManageOS status_os = RESTART_ACTION; /* SO Status */
 	if (iniciar_modo_svga_256("C:\\TC20\\BIN")) 
         return EXIT_FAILURE;
 
 	do {
-        if (estado_os == ACCION_REINICIAR)
+        if (status_os == RESTART_ACTION)
         { animacion_arranque(); pantalla_bienvenida(); }
 
         pantalla_bloqueo_inicial();
-        estado_os = pantalla_bloqueo_sesion();
+        status_os = pantalla_bloqueo_sesion();
 
-        if (estado_os == ACCION_SUSPENDER)
+        if (status_os == SUSPEND_ACTION)
         { mocultar(); colocar_protector_pantalla(); mver(); }
 
-        if (estado_os == INICIAR)
-            estado_os = escritorio_so();
+        if (status_os == START_ACTION)
+            status_os = escritorio_so();
         
-        if (estado_os == ACCION_REINICIAR || estado_os == ACCION_APAGAR)
+        if (status_os == RESTART_ACTION || status_os == SHUT_DOWN_ACTION)
             apagar_sistema_operativo();
-	} while (estado_os != ACCION_APAGAR);
+	} while (status_os != SHUT_DOWN_ACTION);
 
     closegraph();
     return EXIT_SUCCESS;
